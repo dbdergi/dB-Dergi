@@ -13,25 +13,30 @@
       box-sizing: border-box;
     }
 
+    :root {
+      color-scheme: dark;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
       overflow-x: hidden;
       background:
-        radial-gradient(circle at top, #2c2c2c 0%, #111111 42%, #050505 100%);
+        radial-gradient(circle at top, #292929 0%, #111111 44%, #050505 100%);
       color: #ffffff;
       font-family: Arial, Helvetica, sans-serif;
     }
 
     header {
-      min-height: 70px;
-      padding: 15px 5%;
+      min-height: 68px;
+      padding: 14px 5%;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(0, 0, 0, 0.72);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+      background: rgba(0, 0, 0, 0.76);
+      backdrop-filter: blur(14px);
     }
 
     .logo {
@@ -47,16 +52,17 @@
     }
 
     .issue-name {
-      color: #aaaaaa;
-      font-size: 13px;
+      color: #b9b9b9;
+      font-size: 12px;
       letter-spacing: 2px;
+      text-align: right;
       text-transform: uppercase;
     }
 
     main {
       width: 100%;
-      min-height: calc(100vh - 140px);
-      padding: 25px 20px 15px;
+      min-height: calc(100vh - 124px);
+      padding: 22px 20px 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -64,10 +70,10 @@
     }
 
     .loading {
-      min-height: 40px;
-      margin-bottom: 12px;
-      color: #bbbbbb;
-      font-size: 14px;
+      min-height: 32px;
+      margin-bottom: 10px;
+      color: #a9a9a9;
+      font-size: 12px;
       letter-spacing: 1px;
     }
 
@@ -75,7 +81,7 @@
       width: 100%;
       display: flex;
       justify-content: center;
-      perspective: 1800px;
+      perspective: 2200px;
     }
 
     .book {
@@ -83,99 +89,52 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      filter: drop-shadow(0 24px 35px rgba(0, 0, 0, 0.55));
+      filter: drop-shadow(0 26px 38px rgba(0, 0, 0, 0.58));
       transform-style: preserve-3d;
+      isolation: isolate;
     }
 
-    .book::after {
+    .book::before {
       content: "";
       position: absolute;
-      inset: 0;
-      z-index: 10;
-      opacity: 0;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      z-index: 8;
+      width: 1px;
       pointer-events: none;
       background: linear-gradient(
-        90deg,
-        transparent 30%,
-        rgba(255, 255, 255, 0.18) 50%,
-        rgba(0, 0, 0, 0.32) 70%,
+        to bottom,
+        transparent,
+        rgba(0, 0, 0, 0.34) 12%,
+        rgba(0, 0, 0, 0.34) 88%,
         transparent
       );
-    }
-
-    .book.turn-next {
-      animation: turnNext 0.48s ease;
-    }
-
-    .book.turn-prev {
-      animation: turnPrev 0.48s ease;
-    }
-
-    .book.turn-next::after,
-    .book.turn-prev::after {
-      animation: pageShine 0.48s ease;
-    }
-
-    @keyframes turnNext {
-      0% {
-        transform: rotateY(0deg) scale(1);
-      }
-
-      45% {
-        transform: rotateY(-8deg) scale(0.985);
-      }
-
-      100% {
-        transform: rotateY(0deg) scale(1);
-      }
-    }
-
-    @keyframes turnPrev {
-      0% {
-        transform: rotateY(0deg) scale(1);
-      }
-
-      45% {
-        transform: rotateY(8deg) scale(0.985);
-      }
-
-      100% {
-        transform: rotateY(0deg) scale(1);
-      }
-    }
-
-    @keyframes pageShine {
-      0% {
-        opacity: 0;
-        transform: translateX(-20%);
-      }
-
-      45% {
-        opacity: 1;
-      }
-
-      100% {
-        opacity: 0;
-        transform: translateX(20%);
-      }
+      box-shadow:
+        -5px 0 15px rgba(0, 0, 0, 0.15),
+        5px 0 15px rgba(255, 255, 255, 0.04);
     }
 
     .page {
       position: relative;
       overflow: hidden;
       background: #ffffff;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
     }
 
     .page-left {
-      transform-origin: right center;
       border-radius: 5px 0 0 5px;
-      box-shadow: inset -16px 0 24px rgba(0, 0, 0, 0.14);
+      box-shadow:
+        inset -18px 0 25px rgba(0, 0, 0, 0.13),
+        -1px 0 0 rgba(255, 255, 255, 0.65);
     }
 
     .page-right {
-      transform-origin: left center;
       border-radius: 0 5px 5px 0;
-      box-shadow: inset 16px 0 24px rgba(0, 0, 0, 0.12);
+      box-shadow:
+        inset 18px 0 25px rgba(0, 0, 0, 0.11),
+        1px 0 0 rgba(255, 255, 255, 0.65);
     }
 
     canvas {
@@ -191,11 +150,12 @@
       z-index: 2;
       min-width: 25px;
       padding: 4px 7px;
-      border-radius: 20px;
-      background: rgba(0, 0, 0, 0.62);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.58);
       color: #ffffff;
       text-align: center;
-      font-size: 11px;
+      font-size: 10px;
+      line-height: 1;
     }
 
     .page-left .page-number {
@@ -203,64 +163,198 @@
       left: 10px;
     }
 
+    .flip-sheet {
+      position: absolute;
+      z-index: 30;
+      overflow: hidden;
+      background: #ffffff;
+      pointer-events: none;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      will-change: transform, filter;
+    }
+
+    .flip-sheet::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.05) 0%,
+          rgba(255, 255, 255, 0.28) 44%,
+          rgba(0, 0, 0, 0.32) 100%
+        );
+      animation: flipLight 0.72s ease-in-out forwards;
+    }
+
+    .flip-sheet.next {
+      transform-origin: left center;
+      border-radius: 0 5px 5px 0;
+      animation: flipNext 0.72s cubic-bezier(0.23, 0.72, 0.15, 1) forwards;
+    }
+
+    .flip-sheet.previous {
+      transform-origin: right center;
+      border-radius: 5px 0 0 5px;
+      animation: flipPrevious 0.72s cubic-bezier(0.23, 0.72, 0.15, 1) forwards;
+    }
+
+    .flip-sheet canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .flip-sheet .flip-page-number {
+      position: absolute;
+      right: 10px;
+      bottom: 8px;
+      min-width: 25px;
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.58);
+      color: #ffffff;
+      text-align: center;
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .flip-sheet.previous .flip-page-number {
+      right: auto;
+      left: 10px;
+    }
+
+    @keyframes flipNext {
+      0% {
+        transform: rotateY(0deg) translateZ(1px);
+        filter: brightness(1);
+      }
+
+      45% {
+        filter: brightness(0.82);
+      }
+
+      100% {
+        transform: rotateY(-180deg) translateZ(1px);
+        filter: brightness(0.65);
+      }
+    }
+
+    @keyframes flipPrevious {
+      0% {
+        transform: rotateY(0deg) translateZ(1px);
+        filter: brightness(1);
+      }
+
+      45% {
+        filter: brightness(0.82);
+      }
+
+      100% {
+        transform: rotateY(180deg) translateZ(1px);
+        filter: brightness(0.65);
+      }
+    }
+
+    @keyframes flipLight {
+      0% {
+        opacity: 0;
+        transform: translateX(-22%);
+      }
+
+      42% {
+        opacity: 0.72;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateX(28%);
+      }
+    }
+
     .controls {
-      margin-top: 22px;
+      margin-top: 20px;
+      padding: 7px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 4px;
       flex-wrap: wrap;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.48);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(16px);
     }
 
-    button,
+    .control-button,
     .home-button {
-      min-height: 43px;
-      padding: 0 19px;
-      border: 1px solid rgba(255, 255, 255, 0.24);
-      border-radius: 3px;
-      background: #ffffff;
-      color: #111111;
+      min-height: 38px;
+      padding: 0 15px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: #d7d7d7;
       font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
       cursor: pointer;
       text-decoration: none;
       transition:
-        transform 0.18s ease,
+        color 0.18s ease,
         background 0.18s ease,
+        transform 0.18s ease,
         opacity 0.18s ease;
     }
 
-    button:hover,
+    .control-button:hover,
     .home-button:hover {
-      transform: translateY(-2px);
-      background: #dddddd;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.10);
+      transform: translateY(-1px);
     }
 
-    button:disabled {
+    .control-button:focus-visible,
+    .home-button:focus-visible {
+      outline: 2px solid #ffffff;
+      outline-offset: 2px;
+    }
+
+    .control-button:disabled {
       cursor: not-allowed;
-      opacity: 0.35;
+      opacity: 0.28;
       transform: none;
+      background: transparent;
+    }
+
+    .control-icon {
+      font-size: 15px;
+      line-height: 1;
     }
 
     .page-status {
-      min-width: 105px;
-      color: #cccccc;
+      min-width: 96px;
+      padding: 0 12px;
+      color: #9f9f9f;
       text-align: center;
-      font-size: 13px;
-    }
-
-    .fullscreen-button {
-      background: transparent;
-      color: #ffffff;
+      font-size: 11px;
+      letter-spacing: 0.8px;
     }
 
     footer {
-      min-height: 55px;
-      padding: 15px;
-      color: #777777;
+      min-height: 48px;
+      padding: 13px;
+      color: #686868;
       text-align: center;
-      font-size: 11px;
+      font-size: 10px;
+      letter-spacing: 0.3px;
     }
 
     @media (max-width: 800px) {
@@ -270,13 +364,18 @@
       }
 
       .issue-name {
-        font-size: 10px;
-        letter-spacing: 1px;
+        max-width: 58%;
+        font-size: 9px;
+        letter-spacing: 1.2px;
       }
 
       main {
-        min-height: calc(100vh - 115px);
-        padding: 15px 10px;
+        min-height: calc(100vh - 108px);
+        padding: 14px 9px 12px;
+      }
+
+      .book::before {
+        display: none;
       }
 
       .page {
@@ -289,20 +388,33 @@
       }
 
       .controls {
-        margin-top: 15px;
-        gap: 7px;
+        margin-top: 14px;
+        gap: 2px;
       }
 
-      button,
+      .control-button,
       .home-button {
-        min-height: 41px;
-        padding: 0 13px;
-        font-size: 12px;
+        min-height: 36px;
+        padding: 0 11px;
+        font-size: 11px;
+      }
+
+      .control-label {
+        display: none;
       }
 
       .page-status {
-        min-width: 75px;
-        font-size: 12px;
+        min-width: 70px;
+        padding: 0 6px;
+        font-size: 10px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .flip-sheet.next,
+      .flip-sheet.previous,
+      .flip-sheet::after {
+        animation-duration: 0.01ms;
       }
     }
   </style>
@@ -312,7 +424,7 @@
 
   <header>
     <a class="logo" href="index.html">dB <span>Dergi</span></a>
-    <div class="issue-name" id="issueName">Sayı 01</div>
+    <div class="issue-name" id="issueName">ISSUE #001 · 22 Temmuz 2026</div>
   </header>
 
   <main>
@@ -336,31 +448,50 @@
       </div>
     </div>
 
-    <div class="controls">
-      <a class="home-button" href="index.html">
-        Ana Sayfa
+    <div class="controls" aria-label="Dergi kontrolleri">
+      <a class="home-button" href="index.html" aria-label="Ana sayfaya dön">
+        <span class="control-icon">⌂</span>
+        <span class="control-label">Ana sayfa</span>
       </a>
 
-      <button id="previousButton" type="button">
-        ← Önceki
+      <button
+        class="control-button"
+        id="previousButton"
+        type="button"
+        aria-label="Önceki sayfaya geç"
+      >
+        <span class="control-icon">←</span>
+        <span class="control-label">Önceki</span>
       </button>
 
       <div class="page-status" id="pageStatus">
         — / —
       </div>
 
-      <button id="nextButton" type="button">
-        Sonraki →
+      <button
+        class="control-button"
+        id="nextButton"
+        type="button"
+        aria-label="Sonraki sayfaya geç"
+      >
+        <span class="control-label">Sonraki</span>
+        <span class="control-icon">→</span>
       </button>
 
-      <button class="fullscreen-button" id="fullscreenButton" type="button">
-        Tam Ekran
+      <button
+        class="control-button"
+        id="fullscreenButton"
+        type="button"
+        aria-label="Tam ekranı aç veya kapat"
+      >
+        <span class="control-icon">⛶</span>
+        <span class="control-label" id="fullscreenLabel">Tam ekran</span>
       </button>
     </div>
   </main>
 
   <footer>
-    Sayfaları çevirmek için düğmeleri veya klavyedeki yön tuşlarını kullan.
+    Yön tuşlarını veya sayfaların kenarlarını kullanarak ilerleyebilirsin.
   </footer>
 
   <script type="module">
@@ -370,87 +501,217 @@
     pdfjsLib.GlobalWorkerOptions.workerSrc =
       "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.1.200/build/pdf.worker.mjs";
 
-    const parameters = new URLSearchParams(window.location.search);
-    const requestedIssue = parameters.get("issue") || "sayi-1-2026-07-22.pdf";
+    const parameters =
+      new URLSearchParams(window.location.search);
+
+    const requestedIssue =
+      parameters.get("issue") ||
+      "sayi-1-2026-07-22.pdf";
 
     const safeIssueName =
       /^[a-z0-9._-]+\.pdf$/i.test(requestedIssue)
         ? requestedIssue
         : "sayi-1-2026-07-22.pdf";
 
-    const pdfAddress = "/assets/" + safeIssueName;
+    const pdfAddress =
+      "/assets/" + safeIssueName;
 
-    const issueMatch = safeIssueName.match(/sayi-(\d+)\.pdf$/i);
-    const issueNumber = issueMatch ? Number(issueMatch[1]) : 1;
+    const issueMatch =
+      safeIssueName.match(
+        /^sayi-(\d+)(?:-(\d{4})-(\d{2})-(\d{2}))?\.pdf$/i
+      );
+
+    const issueNumber =
+      issueMatch ? Number(issueMatch[1]) : 1;
+
     const issueLabel =
-      "Sayı " + String(issueNumber).padStart(2, "0");
+      "ISSUE #" +
+      String(issueNumber).padStart(3, "0");
 
-    document.title = "dB Dergi · " + issueLabel;
-    document.getElementById("issueName").textContent = issueLabel;
+    let issueDate = "";
 
-    const book = document.getElementById("book");
-    const loading = document.getElementById("loading");
+    if (
+      issueMatch &&
+      issueMatch[2] &&
+      issueMatch[3] &&
+      issueMatch[4]
+    ) {
+      const date =
+        new Date(
+          Date.UTC(
+            Number(issueMatch[2]),
+            Number(issueMatch[3]) - 1,
+            Number(issueMatch[4])
+          )
+        );
 
-    const leftPage = document.getElementById("leftPage");
-    const rightPage = document.getElementById("rightPage");
+      issueDate =
+        new Intl.DateTimeFormat("tr-TR", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+          timeZone: "UTC"
+        }).format(date);
+    }
 
-    const leftCanvas = document.getElementById("leftCanvas");
-    const rightCanvas = document.getElementById("rightCanvas");
+    const fullIssueLabel =
+      issueDate
+        ? issueLabel + " · " + issueDate
+        : issueLabel;
 
-    const leftNumber = document.getElementById("leftNumber");
-    const rightNumber = document.getElementById("rightNumber");
+    document.title =
+      "dB Dergi · " + issueLabel;
 
-    const previousButton = document.getElementById("previousButton");
-    const nextButton = document.getElementById("nextButton");
-    const fullscreenButton = document.getElementById("fullscreenButton");
+    document
+      .getElementById("issueName")
+      .textContent = fullIssueLabel;
 
-    const pageStatus = document.getElementById("pageStatus");
+    const book =
+      document.getElementById("book");
+
+    const loading =
+      document.getElementById("loading");
+
+    const leftPage =
+      document.getElementById("leftPage");
+
+    const rightPage =
+      document.getElementById("rightPage");
+
+    const leftCanvas =
+      document.getElementById("leftCanvas");
+
+    const rightCanvas =
+      document.getElementById("rightCanvas");
+
+    const leftNumber =
+      document.getElementById("leftNumber");
+
+    const rightNumber =
+      document.getElementById("rightNumber");
+
+    const previousButton =
+      document.getElementById("previousButton");
+
+    const nextButton =
+      document.getElementById("nextButton");
+
+    const fullscreenButton =
+      document.getElementById("fullscreenButton");
+
+    const fullscreenLabel =
+      document.getElementById("fullscreenLabel");
+
+    const pageStatus =
+      document.getElementById("pageStatus");
 
     let pdfDocument = null;
     let currentPage = 1;
     let rendering = false;
+    let transitioning = false;
     let resizeTimer = null;
 
     function mobileMode() {
       return window.innerWidth <= 800;
     }
 
-    async function drawPage(pageNumber, canvas, pageContainer) {
-      const page = await pdfDocument.getPage(pageNumber);
-      const originalViewport = page.getViewport({ scale: 1 });
+    function setPageVisibility(
+      pageContainer,
+      visible
+    ) {
+      pageContainer.style.display = "block";
+      pageContainer.style.visibility =
+        visible ? "visible" : "hidden";
+    }
 
-      const maximumWidth = mobileMode()
-        ? Math.min(window.innerWidth - 30, 700)
-        : Math.min((window.innerWidth - 90) / 2, 570);
+    function copyPageSize(
+      source,
+      destination
+    ) {
+      destination.style.width =
+        source.style.width;
 
-      const maximumHeight = Math.max(window.innerHeight - 235, 350);
+      destination.style.height =
+        source.style.height;
+    }
 
-      const displayScale = Math.min(
-        maximumWidth / originalViewport.width,
-        maximumHeight / originalViewport.height
+    async function drawPage(
+      pageNumber,
+      canvas,
+      pageContainer
+    ) {
+      const page =
+        await pdfDocument.getPage(pageNumber);
+
+      const originalViewport =
+        page.getViewport({ scale: 1 });
+
+      const maximumWidth =
+        mobileMode()
+          ? Math.min(window.innerWidth - 28, 700)
+          : Math.min(
+              (window.innerWidth - 84) / 2,
+              570
+            );
+
+      const maximumHeight =
+        Math.max(
+          window.innerHeight - 218,
+          340
+        );
+
+      const displayScale =
+        Math.min(
+          maximumWidth / originalViewport.width,
+          maximumHeight / originalViewport.height
+        );
+
+      const pixelRatio =
+        Math.min(
+          window.devicePixelRatio || 1,
+          2
+        );
+
+      const renderViewport =
+        page.getViewport({
+          scale: displayScale * pixelRatio
+        });
+
+      const displayWidth =
+        renderViewport.width / pixelRatio;
+
+      const displayHeight =
+        renderViewport.height / pixelRatio;
+
+      canvas.width =
+        Math.floor(renderViewport.width);
+
+      canvas.height =
+        Math.floor(renderViewport.height);
+
+      canvas.style.width =
+        displayWidth + "px";
+
+      canvas.style.height =
+        displayHeight + "px";
+
+      pageContainer.style.width =
+        displayWidth + "px";
+
+      pageContainer.style.height =
+        displayHeight + "px";
+
+      const context =
+        canvas.getContext("2d", {
+          alpha: false
+        });
+
+      context.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
       );
-
-      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-
-      const renderViewport = page.getViewport({
-        scale: displayScale * pixelRatio
-      });
-
-      const displayWidth = renderViewport.width / pixelRatio;
-      const displayHeight = renderViewport.height / pixelRatio;
-
-      canvas.width = Math.floor(renderViewport.width);
-      canvas.height = Math.floor(renderViewport.height);
-
-      canvas.style.width = displayWidth + "px";
-      canvas.style.height = displayHeight + "px";
-
-      pageContainer.style.width = displayWidth + "px";
-      pageContainer.style.height = displayHeight + "px";
-
-      const context = canvas.getContext("2d");
-
-      context.clearRect(0, 0, canvas.width, canvas.height);
 
       await page.render({
         canvasContext: context,
@@ -458,51 +719,116 @@
       }).promise;
     }
 
-    async function showPages() {
+    function updateControls() {
+      previousButton.disabled =
+        currentPage <= 1 ||
+        transitioning;
+
+      if (mobileMode()) {
+        nextButton.disabled =
+          currentPage >= pdfDocument.numPages ||
+          transitioning;
+      } else {
+        nextButton.disabled =
+          currentPage >= pdfDocument.numPages ||
+          currentPage + 1 >= pdfDocument.numPages ||
+          transitioning;
+      }
+    }
+
+    async function showPages(
+      announce = true
+    ) {
       if (!pdfDocument || rendering) {
         return;
       }
 
       rendering = true;
-      loading.textContent = "Sayfalar hazırlanıyor…";
+
+      if (announce) {
+        loading.textContent =
+          "Sayfalar hazırlanıyor…";
+      }
 
       try {
         if (mobileMode()) {
           leftPage.style.display = "block";
+          leftPage.style.visibility = "visible";
           rightPage.style.display = "none";
 
-          await drawPage(currentPage, leftCanvas, leftPage);
+          await drawPage(
+            currentPage,
+            leftCanvas,
+            leftPage
+          );
 
-          leftNumber.textContent = currentPage;
+          leftNumber.textContent =
+            currentPage;
+
           pageStatus.textContent =
-            currentPage + " / " + pdfDocument.numPages;
+            currentPage +
+            " / " +
+            pdfDocument.numPages;
         } else if (currentPage === 1) {
-          leftPage.style.display = "none";
-          rightPage.style.display = "block";
+          setPageVisibility(
+            leftPage,
+            false
+          );
 
-          await drawPage(1, rightCanvas, rightPage);
+          setPageVisibility(
+            rightPage,
+            true
+          );
 
+          await drawPage(
+            1,
+            rightCanvas,
+            rightPage
+          );
+
+          copyPageSize(
+            rightPage,
+            leftPage
+          );
+
+          leftNumber.textContent = "";
           rightNumber.textContent = "1";
+
           pageStatus.textContent =
-            "1 / " + pdfDocument.numPages;
+            "1 / " +
+            pdfDocument.numPages;
         } else {
-          leftPage.style.display = "block";
-          rightPage.style.display =
-            currentPage + 1 <= pdfDocument.numPages
-              ? "block"
-              : "none";
+          setPageVisibility(
+            leftPage,
+            true
+          );
 
-          await drawPage(currentPage, leftCanvas, leftPage);
-          leftNumber.textContent = currentPage;
+          setPageVisibility(
+            rightPage,
+            true
+          );
 
-          if (currentPage + 1 <= pdfDocument.numPages) {
+          await drawPage(
+            currentPage,
+            leftCanvas,
+            leftPage
+          );
+
+          leftNumber.textContent =
+            currentPage;
+
+          if (
+            currentPage + 1 <=
+            pdfDocument.numPages
+          ) {
             await drawPage(
               currentPage + 1,
               rightCanvas,
               rightPage
             );
 
-            rightNumber.textContent = currentPage + 1;
+            rightNumber.textContent =
+              currentPage + 1;
 
             pageStatus.textContent =
               currentPage +
@@ -511,25 +837,30 @@
               " / " +
               pdfDocument.numPages;
           } else {
+            setPageVisibility(
+              rightPage,
+              false
+            );
+
+            copyPageSize(
+              leftPage,
+              rightPage
+            );
+
+            rightNumber.textContent = "";
+
             pageStatus.textContent =
-              currentPage + " / " + pdfDocument.numPages;
+              currentPage +
+              " / " +
+              pdfDocument.numPages;
           }
         }
 
-        previousButton.disabled = currentPage <= 1;
-
-        if (mobileMode()) {
-          nextButton.disabled =
-            currentPage >= pdfDocument.numPages;
-        } else {
-          nextButton.disabled =
-            currentPage >= pdfDocument.numPages ||
-            currentPage + 1 >= pdfDocument.numPages;
-        }
-
+        updateControls();
         loading.textContent = "";
       } catch (error) {
         console.error(error);
+
         loading.textContent =
           "Sayfa yüklenemedi. Lütfen sayfayı yenile.";
       }
@@ -537,106 +868,317 @@
       rendering = false;
     }
 
-    function changePage(direction) {
-      if (!pdfDocument || rendering) {
+    function getTargetPage(direction) {
+      if (direction === "next") {
+        if (mobileMode()) {
+          return Math.min(
+            currentPage + 1,
+            pdfDocument.numPages
+          );
+        }
+
+        if (currentPage === 1) {
+          return Math.min(
+            2,
+            pdfDocument.numPages
+          );
+        }
+
+        if (
+          currentPage + 2 <=
+          pdfDocument.numPages
+        ) {
+          return currentPage + 2;
+        }
+
+        return currentPage;
+      }
+
+      if (mobileMode()) {
+        return Math.max(
+          currentPage - 1,
+          1
+        );
+      }
+
+      if (currentPage <= 2) {
+        return 1;
+      }
+
+      return Math.max(
+        currentPage - 2,
+        1
+      );
+    }
+
+    function createFlipSheet(direction) {
+      const sourcePage =
+        mobileMode()
+          ? leftPage
+          : direction === "next"
+            ? rightPage
+            : leftPage;
+
+      const sourceCanvas =
+        mobileMode()
+          ? leftCanvas
+          : direction === "next"
+            ? rightCanvas
+            : leftCanvas;
+
+      const sourceNumber =
+        mobileMode()
+          ? leftNumber
+          : direction === "next"
+            ? rightNumber
+            : leftNumber;
+
+      if (
+        sourcePage.style.visibility ===
+        "hidden"
+      ) {
+        return null;
+      }
+
+      const sourceRect =
+        sourcePage.getBoundingClientRect();
+
+      const bookRect =
+        book.getBoundingClientRect();
+
+      const sheet =
+        document.createElement("div");
+
+      sheet.className =
+        "flip-sheet " + direction;
+
+      sheet.style.left =
+        sourceRect.left -
+        bookRect.left +
+        "px";
+
+      sheet.style.top =
+        sourceRect.top -
+        bookRect.top +
+        "px";
+
+      sheet.style.width =
+        sourceRect.width + "px";
+
+      sheet.style.height =
+        sourceRect.height + "px";
+
+      const copiedCanvas =
+        document.createElement("canvas");
+
+      copiedCanvas.width =
+        sourceCanvas.width;
+
+      copiedCanvas.height =
+        sourceCanvas.height;
+
+      copiedCanvas.style.width =
+        sourceRect.width + "px";
+
+      copiedCanvas.style.height =
+        sourceRect.height + "px";
+
+      const copiedContext =
+        copiedCanvas.getContext("2d");
+
+      copiedContext.drawImage(
+        sourceCanvas,
+        0,
+        0
+      );
+
+      sheet.appendChild(
+        copiedCanvas
+      );
+
+      if (sourceNumber.textContent) {
+        const number =
+          document.createElement("div");
+
+        number.className =
+          "flip-page-number";
+
+        number.textContent =
+          sourceNumber.textContent;
+
+        sheet.appendChild(number);
+      }
+
+      book.appendChild(sheet);
+
+      return sheet;
+    }
+
+    function waitForAnimation(element) {
+      return new Promise(resolve => {
+        if (!element) {
+          resolve();
+          return;
+        }
+
+        let finished = false;
+
+        const finish = () => {
+          if (finished) {
+            return;
+          }
+
+          finished = true;
+          resolve();
+        };
+
+        element.addEventListener(
+          "animationend",
+          finish,
+          { once: true }
+        );
+
+        window.setTimeout(
+          finish,
+          900
+        );
+      });
+    }
+
+    async function changePage(direction) {
+      if (
+        !pdfDocument ||
+        rendering ||
+        transitioning
+      ) {
         return;
       }
 
-      if (direction === "next") {
-        if (mobileMode()) {
-          if (currentPage < pdfDocument.numPages) {
-            currentPage += 1;
-          }
-        } else if (currentPage === 1) {
-          currentPage = 2;
-        } else if (currentPage + 2 <= pdfDocument.numPages) {
-          currentPage += 2;
-        }
+      const targetPage =
+        getTargetPage(direction);
 
-        book.classList.add("turn-next");
-      } else {
-        if (mobileMode()) {
-          if (currentPage > 1) {
-            currentPage -= 1;
-          }
-        } else if (currentPage <= 2) {
-          currentPage = 1;
-        } else {
-          currentPage -= 2;
-        }
-
-        book.classList.add("turn-prev");
+      if (targetPage === currentPage) {
+        return;
       }
 
-      window.setTimeout(async () => {
-        await showPages();
+      transitioning = true;
+      updateControls();
 
-        book.classList.remove("turn-next");
-        book.classList.remove("turn-prev");
-      }, 230);
+      const flipSheet =
+        createFlipSheet(direction);
+
+      currentPage = targetPage;
+
+      await showPages(false);
+
+      await waitForAnimation(
+        flipSheet
+      );
+
+      if (flipSheet) {
+        flipSheet.remove();
+      }
+
+      transitioning = false;
+      updateControls();
     }
 
-    previousButton.addEventListener("click", () => {
-      changePage("previous");
-    });
-
-    nextButton.addEventListener("click", () => {
-      changePage("next");
-    });
-
-    leftPage.addEventListener("click", () => {
-      changePage("previous");
-    });
-
-    rightPage.addEventListener("click", () => {
-      changePage("next");
-    });
-
-    document.addEventListener("keydown", event => {
-      if (event.key === "ArrowRight") {
-        changePage("next");
-      }
-
-      if (event.key === "ArrowLeft") {
+    previousButton.addEventListener(
+      "click",
+      () => {
         changePage("previous");
       }
-    });
+    );
 
-    fullscreenButton.addEventListener("click", async () => {
-      try {
-        if (!document.fullscreenElement) {
-          await document.documentElement.requestFullscreen();
-          fullscreenButton.textContent = "Tam Ekrandan Çık";
-        } else {
-          await document.exitFullscreen();
-          fullscreenButton.textContent = "Tam Ekran";
+    nextButton.addEventListener(
+      "click",
+      () => {
+        changePage("next");
+      }
+    );
+
+    leftPage.addEventListener(
+      "click",
+      () => {
+        changePage("previous");
+      }
+    );
+
+    rightPage.addEventListener(
+      "click",
+      () => {
+        changePage("next");
+      }
+    );
+
+    document.addEventListener(
+      "keydown",
+      event => {
+        if (event.key === "ArrowRight") {
+          changePage("next");
         }
-      } catch (error) {
-        console.error(error);
+
+        if (event.key === "ArrowLeft") {
+          changePage("previous");
+        }
       }
-    });
+    );
 
-    document.addEventListener("fullscreenchange", () => {
-      if (!document.fullscreenElement) {
-        fullscreenButton.textContent = "Tam Ekran";
+    fullscreenButton.addEventListener(
+      "click",
+      async () => {
+        try {
+          if (
+            !document.fullscreenElement
+          ) {
+            await document
+              .documentElement
+              .requestFullscreen();
+          } else {
+            await document
+              .exitFullscreen();
+          }
+        } catch (error) {
+          console.error(error);
+        }
       }
-    });
+    );
 
-    window.addEventListener("resize", () => {
-      clearTimeout(resizeTimer);
+    document.addEventListener(
+      "fullscreenchange",
+      () => {
+        fullscreenLabel.textContent =
+          document.fullscreenElement
+            ? "Tam ekrandan çık"
+            : "Tam ekran";
+      }
+    );
 
-      resizeTimer = setTimeout(() => {
-        showPages();
-      }, 250);
-    });
+    window.addEventListener(
+      "resize",
+      () => {
+        clearTimeout(resizeTimer);
+
+        resizeTimer =
+          window.setTimeout(() => {
+            if (!transitioning) {
+              showPages(false);
+            }
+          }, 260);
+      }
+    );
 
     async function startReader() {
       try {
-        loading.textContent = "Dergi yükleniyor…";
+        loading.textContent =
+          "Dergi yükleniyor…";
 
-        pdfDocument = await pdfjsLib
-          .getDocument({ url: pdfAddress })
-          .promise;
+        pdfDocument =
+          await pdfjsLib
+            .getDocument({
+              url: pdfAddress
+            })
+            .promise;
 
         await showPages();
       } catch (error) {
