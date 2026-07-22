@@ -619,7 +619,7 @@
         loading.textContent = "Dergi yükleniyor…";
 
         pdfDocument = await pdfjsLib
-          .getDocument(pdfAddress)
+          .getDocument({ url: pdfAddress })
           .promise;
 
         await showPages();
