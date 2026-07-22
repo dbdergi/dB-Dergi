@@ -24,7 +24,7 @@
     }
 
     body {
-      min-height: 100vh;
+      min-height: 100dvh;
       overflow-x: hidden;
       background:
         radial-gradient(circle at top, #292929 0%, #111111 44%, #050505 100%);
@@ -66,12 +66,12 @@
 
     main {
       width: 100%;
-      min-height: calc(100vh - 116px);
-      padding: 18px 16px 12px;
+      min-height: 0;
+      padding: 12px 16px 10px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
     }
 
     .loading {
@@ -86,8 +86,8 @@
     .book-stage {
       position: relative;
       width: min(1240px, calc(100vw - 28px));
-      height: calc(100vh - 192px);
-      min-height: 390px;
+      height: clamp(320px, calc(100dvh - 250px), 760px);
+      min-height: 0;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -260,7 +260,10 @@
     }
 
     .controls {
-      margin-top: 14px;
+      position: relative;
+      z-index: 80;
+      flex-shrink: 0;
+      margin-top: 10px;
       padding: 7px;
       display: flex;
       align-items: center;
@@ -472,14 +475,14 @@
       }
 
       main {
-        min-height: calc(100vh - 108px);
-        padding: 12px 8px 10px;
+        min-height: 0;
+        padding: 10px 8px 8px;
       }
 
       .book-stage {
         width: calc(100vw - 14px);
-        height: calc(100vh - 176px);
-        min-height: 360px;
+        height: clamp(280px, calc(100dvh - 220px), 640px);
+        min-height: 0;
       }
 
       .controls {
@@ -774,6 +777,9 @@
 
     const bookElement =
       document.getElementById("book");
+
+    const bookStage =
+      document.querySelector(".book-stage");
 
     const closedBook =
       document.getElementById("closedBook");
@@ -1379,25 +1385,66 @@
         );
       }
 
-      const baseWidth = 560;
-      const baseHeight =
+      const stageBounds =
+        bookStage.getBoundingClientRect();
+
+      const mobile =
+        window.innerWidth <= 800;
+
+      const visiblePageCount =
+        mobile ? 1 : 2;
+
+      const horizontalSpace =
+        mobile ? 12 : 30;
+
+      const widthLimit =
+        (stageBounds.width -
+          horizontalSpace) /
+        visiblePageCount;
+
+      const heightLimit =
+        (stageBounds.height - 10) /
+        pageRatio;
+
+      const fittedPageWidth =
+        Math.floor(
+          Math.max(
+            190,
+            Math.min(
+              600,
+              widthLimit,
+              heightLimit
+            )
+          )
+        );
+
+      const fittedPageHeight =
         Math.round(
-          baseWidth * pageRatio
+          fittedPageWidth * pageRatio
+        );
+
+      const minimumPageWidth =
+        Math.min(
+          220,
+          fittedPageWidth
         );
 
       pageFlip =
         new window.St.PageFlip(
           bookElement,
           {
-            width: baseWidth,
-            height: baseHeight,
+            width: fittedPageWidth,
+            height: fittedPageHeight,
             size: "stretch",
-            minWidth: 260,
-            maxWidth: 620,
+            minWidth: minimumPageWidth,
+            maxWidth: fittedPageWidth,
             minHeight:
-              Math.round(260 * pageRatio),
+              Math.round(
+                minimumPageWidth *
+                pageRatio
+              ),
             maxHeight:
-              Math.round(620 * pageRatio),
+              fittedPageHeight,
             drawShadow: true,
             maxShadowOpacity: 0.46,
             flippingTime: 950,
