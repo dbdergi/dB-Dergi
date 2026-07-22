@@ -586,6 +586,16 @@
 
       <button
         class="control-button"
+        id="shareButton"
+        type="button"
+        aria-label="Dergiyi paylaş"
+      >
+        <span class="control-icon">↗</span>
+        <span class="control-label" id="shareLabel">Paylaş</span>
+      </button>
+
+      <button
+        class="control-button"
         id="fullscreenButton"
         type="button"
         aria-label="Tam ekranı aç veya kapat"
@@ -785,6 +795,12 @@
 
     const nextButton =
       document.getElementById("nextButton");
+
+    const shareButton =
+      document.getElementById("shareButton");
+
+    const shareLabel =
+      document.getElementById("shareLabel");
 
     const fullscreenButton =
       document.getElementById("fullscreenButton");
@@ -1492,6 +1508,132 @@
           !closedState
         ) {
           pageFlip.flipPrev("bottom");
+        }
+      }
+    );
+
+    async function copyShareAddress(
+      address
+    ) {
+      if (
+        navigator.clipboard &&
+        window.isSecureContext
+      ) {
+        await navigator.clipboard.writeText(
+          address
+        );
+
+        return;
+      }
+
+      const temporaryInput =
+        document.createElement("textarea");
+
+      temporaryInput.value = address;
+      temporaryInput.setAttribute(
+        "readonly",
+        ""
+      );
+
+      temporaryInput.style.position =
+        "fixed";
+
+      temporaryInput.style.opacity =
+        "0";
+
+      document.body.appendChild(
+        temporaryInput
+      );
+
+      temporaryInput.select();
+      document.execCommand("copy");
+      temporaryInput.remove();
+    }
+
+    function showShareMessage(
+      message
+    ) {
+      shareLabel.textContent =
+        message;
+
+      window.clearTimeout(
+        window.shareMessageTimer
+      );
+
+      window.shareMessageTimer =
+        window.setTimeout(
+          () => {
+            shareLabel.textContent =
+              "Paylaş";
+          },
+          1800
+        );
+    }
+
+    shareButton.addEventListener(
+      "click",
+      async () => {
+        const shareUrl =
+          new URL(
+            window.location.href
+          );
+
+        shareUrl.hash = "";
+
+        const shareData = {
+          title:
+            fullIssueLabel +
+            " · dB Dergi",
+          text:
+            fullIssueLabel +
+            " — bağımsız dijital taraftar fanzini.",
+          url:
+            shareUrl.toString()
+        };
+
+        try {
+          if (navigator.share) {
+            await navigator.share(
+              shareData
+            );
+
+            showShareMessage(
+              "Paylaşıldı"
+            );
+          } else {
+            await copyShareAddress(
+              shareData.url
+            );
+
+            showShareMessage(
+              "Bağlantı kopyalandı"
+            );
+          }
+        } catch (error) {
+          if (
+            error &&
+            error.name === "AbortError"
+          ) {
+            return;
+          }
+
+          console.error(error);
+
+          try {
+            await copyShareAddress(
+              shareData.url
+            );
+
+            showShareMessage(
+              "Bağlantı kopyalandı"
+            );
+          } catch (copyError) {
+            console.error(copyError);
+
+            showShareMessage(
+              "Tekrar dene"
+            );
+          }
         }
       }
     );

@@ -255,6 +255,50 @@
       transform: translateY(-2px);
     }
 
+    .latest-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .share-button {
+      min-height: 50px;
+      padding: 0 19px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid #cfcfcf;
+      background: #ffffff;
+      color: #111111;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+      transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    .share-button:hover {
+      background: #f0f0f0;
+      border-color: #111111;
+      transform: translateY(-2px);
+    }
+
+    .share-button:focus-visible {
+      outline: 2px solid #111111;
+      outline-offset: 3px;
+    }
+
+    .share-icon {
+      font-size: 15px;
+      line-height: 1;
+    }
+
     .archive {
       width: 100%;
       max-width: 1100px;
@@ -284,6 +328,11 @@
       gap: 20px;
     }
 
+    .archive-card-wrap {
+      position: relative;
+      transition: 0.2s;
+    }
+
     .archive-card {
       display: block;
       overflow: hidden;
@@ -294,10 +343,49 @@
       transition: 0.2s;
     }
 
-    .archive-card:hover {
+    .archive-card-wrap:hover {
       transform: translateY(-4px);
+    }
+
+    .archive-card-wrap:hover .archive-card {
       border-color: #111111;
       box-shadow: 0 14px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .archive-share-button {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      z-index: 3;
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #d6d6d6;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.94);
+      color: #111111;
+      font-family: inherit;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 7px 18px rgba(0, 0, 0, 0.12);
+      transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.18s ease;
+    }
+
+    .archive-share-button:hover {
+      background: #111111;
+      color: #ffffff;
+      border-color: #111111;
+      transform: scale(1.06);
+    }
+
+    .archive-share-button:focus-visible {
+      outline: 2px solid #111111;
+      outline-offset: 3px;
     }
 
     .archive-cover-frame {
@@ -552,6 +640,15 @@
         padding: 35px 25px;
       }
 
+      .latest-actions {
+        justify-content: center;
+      }
+
+      .share-button {
+        min-height: 46px;
+        padding: 0 16px;
+      }
+
       .archive-grid {
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
         gap: 14px;
@@ -661,14 +758,26 @@
             ücretsiz ve dijital bir dergi deneyimi.
           </p>
 
-          <a
-            class="button"
-            id="latestReadButton"
-            href="reader.html?issue=sayi-1-2026-07-22.pdf"
-            target="_blank"
-          >
-            DERGİYİ OKU →
-          </a>
+          <div class="latest-actions">
+            <a
+              class="button"
+              id="latestReadButton"
+              href="reader.html?issue=sayi-1-2026-07-22.pdf"
+              target="_blank"
+            >
+              DERGİYİ OKU →
+            </a>
+
+            <button
+              class="share-button"
+              id="latestShareButton"
+              type="button"
+              aria-label="Son sayıyı paylaş"
+            >
+              <span class="share-icon">↗</span>
+              <span id="latestShareLabel">PAYLAŞ</span>
+            </button>
+          </div>
         </div>
 
       </div>
@@ -810,6 +919,12 @@
 
     const latestReadButton =
       document.getElementById("latestReadButton");
+
+    const latestShareButton =
+      document.getElementById("latestShareButton");
+
+    const latestShareLabel =
+      document.getElementById("latestShareLabel");
 
     const latestTitle =
       document.getElementById("latestTitle");
@@ -1110,6 +1225,133 @@
       }
     }
 
+    async function copyShareAddress(address) {
+      if (
+        navigator.clipboard &&
+        window.isSecureContext
+      ) {
+        await navigator.clipboard.writeText(
+          address
+        );
+
+        return;
+      }
+
+      const temporaryInput =
+        document.createElement("textarea");
+
+      temporaryInput.value = address;
+      temporaryInput.setAttribute(
+        "readonly",
+        ""
+      );
+
+      temporaryInput.style.position =
+        "fixed";
+
+      temporaryInput.style.opacity =
+        "0";
+
+      document.body.appendChild(
+        temporaryInput
+      );
+
+      temporaryInput.select();
+      document.execCommand("copy");
+      temporaryInput.remove();
+    }
+
+    function absoluteReaderAddress(fileName) {
+      return new URL(
+        readerAddress(fileName),
+        window.location.href
+      ).toString();
+    }
+
+    async function shareIssue(
+      issue,
+      feedbackElement
+    ) {
+      const label =
+        issueLabel(issue);
+
+      const shareData = {
+        title:
+          label + " · dB Dergi",
+        text:
+          label +
+          " — bağımsız dijital taraftar fanzini.",
+        url:
+          absoluteReaderAddress(
+            issue.fileName
+          )
+      };
+
+      const originalText =
+        feedbackElement
+          ? feedbackElement.textContent
+          : "";
+
+      try {
+        if (navigator.share) {
+          await navigator.share(
+            shareData
+          );
+
+          if (feedbackElement) {
+            feedbackElement.textContent =
+              "PAYLAŞILDI";
+          }
+        } else {
+          await copyShareAddress(
+            shareData.url
+          );
+
+          if (feedbackElement) {
+            feedbackElement.textContent =
+              "KOPYALANDI";
+          }
+        }
+      } catch (error) {
+        if (
+          error &&
+          error.name === "AbortError"
+        ) {
+          return;
+        }
+
+        console.error(error);
+
+        try {
+          await copyShareAddress(
+            shareData.url
+          );
+
+          if (feedbackElement) {
+            feedbackElement.textContent =
+              "KOPYALANDI";
+          }
+        } catch (copyError) {
+          console.error(copyError);
+
+          if (feedbackElement) {
+            feedbackElement.textContent =
+              "TEKRAR DENE";
+          }
+        }
+      }
+
+      if (feedbackElement) {
+        window.setTimeout(
+          () => {
+            feedbackElement.textContent =
+              originalText;
+          },
+          1800
+        );
+      }
+    }
+
     function showLatestIssue(issue) {
       const label = issueLabel(issue);
       const date = issueDate(issue);
@@ -1124,6 +1366,13 @@
       latestCoverLink.href = link;
       latestReadButton.href = link;
 
+      latestShareButton.onclick = () => {
+        shareIssue(
+          issue,
+          latestShareLabel
+        );
+      };
+
       renderCover(
         issue.fileName,
         latestCover,
@@ -1132,12 +1381,19 @@
     }
 
     function createArchiveCard(issue) {
+      const wrapper =
+        document.createElement("div");
+
+      wrapper.className =
+        "archive-card-wrap";
+
       const card =
         document.createElement("a");
 
       card.className = "archive-card";
       card.href = readerAddress(issue.fileName);
       card.target = "_blank";
+      card.rel = "noopener noreferrer";
 
       const coverFrame =
         document.createElement("div");
@@ -1197,6 +1453,38 @@
       card.appendChild(coverFrame);
       card.appendChild(content);
 
+      const shareButton =
+        document.createElement("button");
+
+      shareButton.className =
+        "archive-share-button";
+
+      shareButton.type = "button";
+
+      shareButton.textContent = "↗";
+
+      shareButton.setAttribute(
+        "aria-label",
+        issueLabel(issue) +
+        " sayısını paylaş"
+      );
+
+      shareButton.addEventListener(
+        "click",
+        event => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          shareIssue(
+            issue,
+            null
+          );
+        }
+      );
+
+      wrapper.appendChild(card);
+      wrapper.appendChild(shareButton);
+
       if ("IntersectionObserver" in window) {
         const observer =
           new IntersectionObserver(
@@ -1212,7 +1500,7 @@
                   loading
                 );
 
-                observer.unobserve(card);
+                observer.unobserve(wrapper);
               });
             },
             {
@@ -1220,7 +1508,7 @@
             }
           );
 
-        observer.observe(card);
+        observer.observe(wrapper);
         coverObservers.push(observer);
       } else {
         renderCover(
@@ -1230,7 +1518,7 @@
         );
       }
 
-      return card;
+      return wrapper;
     }
 
     function showArchive(issues) {
