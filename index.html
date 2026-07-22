@@ -669,6 +669,16 @@
       );
     }
 
+    function coverAddress(fileName) {
+      const coverFileName =
+        fileName.replace(/\.pdf$/i, ".webp");
+
+      return (
+        "assets/covers/" +
+        encodeURIComponent(coverFileName)
+      );
+    }
+
     function parseIssueFile(fileName) {
       const match = fileName.match(
         /^sayi-(\d+)(?:-(\d{4})-(\d{2})-(\d{2}))?\.pdf$/i
@@ -729,25 +739,73 @@
       return issues;
     }
 
-    async function renderCover(
+    async function drawGeneratedCover(
       fileName,
-      canvas,
-      loadingElement
+      canvas
     ) {
+      const image =
+        new Image();
+
+      image.decoding = "async";
+      image.src = coverAddress(fileName);
+
+      await image.decode();
+
+      const cssWidth =
+        Math.max(
+          canvas.parentElement.clientWidth,
+          180
+        );
+
+      const pixelRatio =
+        Math.min(
+          window.devicePixelRatio || 1,
+          2
+        );
+
+      const ratio =
+        image.naturalHeight /
+        image.naturalWidth;
+
+      canvas.width =
+        Math.floor(
+          cssWidth * pixelRatio
+        );
+
+      canvas.height =
+        Math.floor(
+          cssWidth *
+          ratio *
+          pixelRatio
+        );
+
+      const context =
+        canvas.getContext("2d", {
+          alpha: false
+        });
+
+      context.drawImage(
+        image,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+    }
+
+    async function drawPdfCover(
+      fileName,
+      canvas
+    ) {
+      const loadingTask =
+        pdfjsLib.getDocument({
+          url: pdfAddress(fileName)
+        });
+
+      const pdfDocument =
+        await loadingTask.promise;
+
       try {
-        if (loadingElement) {
-          loadingElement.textContent =
-            "Kapak hazırlanıyor…";
-        }
-
-        const loadingTask =
-          pdfjsLib.getDocument({
-            url: pdfAddress(fileName)
-          });
-
-        const pdfDocument =
-          await loadingTask.promise;
-
         const firstPage =
           await pdfDocument.getPage(1);
 
@@ -769,7 +827,8 @@
           );
 
         const scale =
-          (cssWidth / originalViewport.width) *
+          (cssWidth /
+            originalViewport.width) *
           pixelRatio;
 
         const renderViewport =
@@ -778,10 +837,14 @@
           });
 
         canvas.width =
-          Math.floor(renderViewport.width);
+          Math.floor(
+            renderViewport.width
+          );
 
         canvas.height =
-          Math.floor(renderViewport.height);
+          Math.floor(
+            renderViewport.height
+          );
 
         const context =
           canvas.getContext("2d", {
@@ -792,13 +855,50 @@
           canvasContext: context,
           viewport: renderViewport
         }).promise;
+      } finally {
+        if (
+          typeof pdfDocument.destroy ===
+          "function"
+        ) {
+          await pdfDocument.destroy();
+        }
+      }
+    }
 
+    async function renderCover(
+      fileName,
+      canvas,
+      loadingElement
+    ) {
+      try {
         if (loadingElement) {
-          loadingElement.style.display = "none";
+          loadingElement.style.display =
+            "flex";
+
+          loadingElement.textContent =
+            "Kapak yükleniyor…";
         }
 
-        if (typeof pdfDocument.destroy === "function") {
-          await pdfDocument.destroy();
+        try {
+          await drawGeneratedCover(
+            fileName,
+            canvas
+          );
+        } catch (coverError) {
+          console.warn(
+            "Hazır kapak bulunamadı, PDF kullanılıyor.",
+            coverError
+          );
+
+          await drawPdfCover(
+            fileName,
+            canvas
+          );
+        }
+
+        if (loadingElement) {
+          loadingElement.style.display =
+            "none";
         }
       } catch (error) {
         console.error(error);
