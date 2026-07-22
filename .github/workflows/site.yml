@@ -102,8 +102,8 @@ jobs:
 
             pdftoppm \
               -jpeg \
-              -jpegopt quality=92,progressive=y,optimize=y \
-              -r 210 \
+              -jpegopt quality=98,progressive=y,optimize=y \
+              -r 320 \
               "$pdf" \
               "${temporary_dir}/page"
 
@@ -119,10 +119,11 @@ jobs:
 
               cwebp \
                 -quiet \
-                -q 90 \
+                -preset text \
+                -q 96 \
                 -m 6 \
                 -sharp_yuv \
-                -resize 1600 0 \
+                -resize 2600 0 \
                 "$page_image" \
                 -o "${output_dir}/${output_name}"
 
