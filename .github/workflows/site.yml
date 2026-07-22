@@ -26,10 +26,10 @@ jobs:
       - name: GitHub Pages'i hazırla
         uses: actions/configure-pages@v5
 
-      - name: Kapak araçlarını kur
+      - name: Görsel araçlarını kur
         run: |
           sudo apt-get update
-          sudo apt-get install -y poppler-utils webp
+          sudo apt-get install -y poppler-utils webp imagemagick
 
       - name: Site klasörünü hazırla
         run: |
@@ -66,8 +66,8 @@ jobs:
 
             cwebp \
               -quiet \
-              -q 80 \
-              -resize 900 0 \
+              -q 82 \
+              -resize 1000 0 \
               "${temporary_image}.jpg" \
               -o "$cover"
 
@@ -79,6 +79,219 @@ jobs:
               -iname 'sayi-*.pdf' \
               -print0
           )
+
+      - name: Paylaşım önizlemesini otomatik hazırla
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 <<'PY'
+          from pathlib import Path
+          import html
+          import os
+          import re
+          import shutil
+          import subprocess
+
+          site = Path("_site")
+          assets = site / "assets"
+          index_path = site / "index.html"
+
+          issue_pattern = re.compile(
+              r"^sayi-(\d+)(?:-(\d{4})-(\d{2})-(\d{2}))?\.pdf$",
+              re.IGNORECASE,
+          )
+
+          issues = []
+
+          for pdf_path in assets.glob("sayi-*.pdf"):
+              match = issue_pattern.match(pdf_path.name)
+
+              if match:
+                  issues.append(
+                      (
+                          int(match.group(1)),
+                          pdf_path,
+                          match,
+                      )
+                  )
+
+          if not issues:
+              raise SystemExit(
+                  "Paylaşım önizlemesi için sayı PDF'i bulunamadı."
+              )
+
+          issues.sort(
+              key=lambda item: item[0],
+              reverse=True,
+          )
+
+          issue_number, latest_pdf, match = issues[0]
+
+          latest_cover = (
+              site
+              / "assets"
+              / "covers"
+              / f"{latest_pdf.stem}.webp"
+          )
+
+          if not latest_cover.exists():
+              raise SystemExit(
+                  f"Son sayının kapağı bulunamadı: {latest_cover}"
+              )
+
+          social_image = (
+              site
+              / "assets"
+              / "social-preview.jpg"
+          )
+
+          image_command = (
+              shutil.which("magick")
+              or shutil.which("convert")
+          )
+
+          if not image_command:
+              raise SystemExit(
+                  "ImageMagick komutu bulunamadı."
+              )
+
+          subprocess.run(
+              [
+                  image_command,
+                  str(latest_cover),
+                  "-resize",
+                  "560x560",
+                  "-background",
+                  "#090909",
+                  "-gravity",
+                  "center",
+                  "-extent",
+                  "1200x630",
+                  "-quality",
+                  "92",
+                  str(social_image),
+              ],
+              check=True,
+          )
+
+          issue_label = f"ISSUE #{issue_number:03d}"
+
+          month_names = {
+              1: "Ocak",
+              2: "Şubat",
+              3: "Mart",
+              4: "Nisan",
+              5: "Mayıs",
+              6: "Haziran",
+              7: "Temmuz",
+              8: "Ağustos",
+              9: "Eylül",
+              10: "Ekim",
+              11: "Kasım",
+              12: "Aralık",
+          }
+
+          date_text = ""
+
+          if match.group(2):
+              year = int(match.group(2))
+              month = int(match.group(3))
+              day = int(match.group(4))
+
+              date_text = (
+                  f"{day} "
+                  f"{month_names.get(month, month)} "
+                  f"{year}"
+              )
+
+          title = f"{issue_label} · dB Dergi"
+
+          if date_text:
+              description = (
+                  f"{issue_label} · {date_text}. "
+                  "Bağımsız dijital taraftar fanzinini ücretsiz oku."
+              )
+          else:
+              description = (
+                  f"{issue_label}. "
+                  "Bağımsız dijital taraftar fanzinini ücretsiz oku."
+              )
+
+          commit_version = os.environ.get(
+              "GITHUB_SHA",
+              latest_pdf.stem,
+          )[:12]
+
+          page_url = "https://dbdergi.com/"
+          image_url = (
+              "https://dbdergi.com/"
+              f"assets/social-preview.jpg?v={commit_version}"
+          )
+
+          meta_block = f"""
+          <!-- SOCIAL PREVIEW START -->
+          <meta name="description" content="{html.escape(description, quote=True)}">
+
+          <link rel="canonical" href="{page_url}">
+
+          <meta property="og:locale" content="tr_TR">
+          <meta property="og:type" content="website">
+          <meta property="og:site_name" content="dB Dergi">
+          <meta property="og:title" content="{html.escape(title, quote=True)}">
+          <meta property="og:description" content="{html.escape(description, quote=True)}">
+          <meta property="og:url" content="{page_url}">
+          <meta property="og:image" content="{image_url}">
+          <meta property="og:image:secure_url" content="{image_url}">
+          <meta property="og:image:type" content="image/jpeg">
+          <meta property="og:image:width" content="1200">
+          <meta property="og:image:height" content="630">
+          <meta property="og:image:alt" content="{html.escape(issue_label + ' kapağı', quote=True)}">
+
+          <meta name="twitter:card" content="summary_large_image">
+          <meta name="twitter:site" content="@dbdergi">
+          <meta name="twitter:title" content="{html.escape(title, quote=True)}">
+          <meta name="twitter:description" content="{html.escape(description, quote=True)}">
+          <meta name="twitter:image" content="{image_url}">
+          <meta name="twitter:image:alt" content="{html.escape(issue_label + ' kapağı', quote=True)}">
+          <!-- SOCIAL PREVIEW END -->
+          """.strip()
+
+          index_html = index_path.read_text(
+              encoding="utf-8"
+          )
+
+          index_html = re.sub(
+              r"\s*<!-- SOCIAL PREVIEW START -->.*?<!-- SOCIAL PREVIEW END -->\s*",
+              "\n",
+              index_html,
+              flags=re.DOTALL,
+          )
+
+          if "<head>" not in index_html:
+              raise SystemExit(
+                  "index.html içinde <head> bulunamadı."
+              )
+
+          index_html = index_html.replace(
+              "<head>",
+              "<head>\n  "
+              + meta_block.replace("\n", "\n  "),
+              1,
+          )
+
+          index_path.write_text(
+              index_html,
+              encoding="utf-8",
+          )
+
+          print(
+              f"Paylaşım önizlemesi hazırlandı: {title}"
+          )
+          print(
+              f"Paylaşım görseli: {social_image}"
+          )
+          PY
 
       - name: Siteyi paketle
         uses: actions/upload-pages-artifact@v4
