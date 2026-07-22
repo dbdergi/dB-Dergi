@@ -439,6 +439,69 @@
       font-size: 14px;
     }
 
+    .about-contact {
+      width: 100%;
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 20px;
+    }
+
+    .about-card,
+    .contact-card {
+      padding: 34px;
+      background: #ffffff;
+      border: 1px solid #dddddd;
+    }
+
+    .section-kicker {
+      display: block;
+      margin-bottom: 12px;
+      color: #777777;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+    }
+
+    .about-card h2,
+    .contact-card h2 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      letter-spacing: -1px;
+    }
+
+    .about-card p,
+    .contact-card p {
+      color: #555555;
+      font-size: 15px;
+      line-height: 1.75;
+    }
+
+    .about-card p + p {
+      margin-top: 16px;
+    }
+
+    .contact-card a {
+      display: inline-block;
+      margin-top: 22px;
+      color: #111111;
+      font-size: 17px;
+      font-weight: 800;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      overflow-wrap: anywhere;
+    }
+
+    .contact-card a:hover {
+      color: #555555;
+    }
+
+    .contact-card a:focus-visible {
+      outline: 2px solid #111111;
+      outline-offset: 4px;
+    }
+
     footer {
       padding: 25px 7%;
       color: #777777;
@@ -654,6 +717,20 @@
         gap: 14px;
       }
 
+      .about-contact {
+        grid-template-columns: 1fr;
+      }
+
+      .about-card,
+      .contact-card {
+        padding: 26px 22px;
+      }
+
+      .about-card h2,
+      .contact-card h2 {
+        font-size: 24px;
+      }
+
       .archive-card-content {
         padding: 16px;
       }
@@ -799,6 +876,47 @@
           Dergi arşivi hazırlanıyor…
         </div>
       </div>
+
+    </section>
+
+    <section class="about-contact" aria-label="Hakkımızda ve iletişim">
+
+      <article class="about-card">
+        <span class="section-kicker">dB Dergi</span>
+        <h2>Hakkımızda</h2>
+
+        <p>
+          dB Dergi, Beşiktaş’ı yalnızca skorlarla değil; tribünü,
+          tarihi, kültürü, insanları ve hikâyeleriyle anlatmak için
+          hazırlanan bağımsız bir dijital taraftar fanzinidir.
+        </p>
+
+        <p>
+          Yazılarımızı taraftarın gözünden, özgür ve samimi bir dille
+          hazırlıyoruz. Amacımız; farklı görüşlere yer vermek, Beşiktaş
+          kültürüne katkı sunmak ve gelecek yıllara dijital bir taraftar
+          hafızası bırakmak.
+        </p>
+
+        <p>
+          dB Dergi gönüllü emekle hazırlanır, ücretsiz yayımlanır ve
+          Beşiktaş Jimnastik Kulübü ile resmî bir bağlantısı bulunmaz.
+        </p>
+      </article>
+
+      <aside class="contact-card">
+        <span class="section-kicker">Bize ulaşın</span>
+        <h2>İletişim</h2>
+
+        <p>
+          Görüş, öneri, yazı katkısı, düzeltme ve içerik kaldırma
+          talepleriniz için:
+        </p>
+
+        <a href="mailto:dergidb@gmail.com">
+          dergidb@gmail.com
+        </a>
+      </aside>
 
     </section>
 
