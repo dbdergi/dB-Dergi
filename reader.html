@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>dB Dergi · Sayı 1</title>
+  <title>dB Dergi</title>
 
   <link rel="icon" type="image/png" href="assets/favicon.png?v=3">
 
@@ -312,7 +312,7 @@
 
   <header>
     <a class="logo" href="index.html">dB <span>Dergi</span></a>
-    <div class="issue-name">Sayı 01 · Temmuz 2026</div>
+    <div class="issue-name" id="issueName">Sayı 01</div>
   </header>
 
   <main>
@@ -370,7 +370,23 @@
     pdfjsLib.GlobalWorkerOptions.workerSrc =
       "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.1.200/build/pdf.worker.mjs";
 
-    const pdfAddress = "/assets/sayi-1.pdf";
+    const parameters = new URLSearchParams(window.location.search);
+    const requestedIssue = parameters.get("issue") || "sayi-1.pdf";
+
+    const safeIssueName =
+      /^[a-z0-9._-]+\.pdf$/i.test(requestedIssue)
+        ? requestedIssue
+        : "sayi-1.pdf";
+
+    const pdfAddress = "/assets/" + safeIssueName;
+
+    const issueMatch = safeIssueName.match(/sayi-(\d+)\.pdf$/i);
+    const issueNumber = issueMatch ? Number(issueMatch[1]) : 1;
+    const issueLabel =
+      "Sayı " + String(issueNumber).padStart(2, "0");
+
+    document.title = "dB Dergi · " + issueLabel;
+    document.getElementById("issueName").textContent = issueLabel;
 
     const book = document.getElementById("book");
     const loading = document.getElementById("loading");
