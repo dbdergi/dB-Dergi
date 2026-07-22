@@ -1068,28 +1068,11 @@
         viewport: viewport
       }).promise;
 
-      let blob;
-
-      try {
-        blob =
-          await canvasToBlob(
-            canvas,
-            "image/webp",
-            0.88
-          );
-      } catch (webpError) {
-        console.warn(
-          "WebP oluşturulamadı, JPEG kullanılıyor.",
-          webpError
+      const blob =
+        await canvasToBlob(
+          canvas,
+          "image/png"
         );
-
-        blob =
-          await canvasToBlob(
-            canvas,
-            "image/jpeg",
-            0.90
-          );
-      }
 
       canvas.width = 1;
       canvas.height = 1;
@@ -1106,6 +1089,12 @@
       const mobile =
         window.innerWidth <= 800;
 
+      const pixelRatio =
+        Math.min(
+          window.devicePixelRatio || 1,
+          2
+        );
+
       const availableHeight =
         Math.max(
           window.innerHeight - 205,
@@ -1117,15 +1106,18 @@
           ? window.innerWidth - 24
           : (window.innerWidth - 70) / 2;
 
+      const visualWidth =
+        Math.min(
+          availableWidth * 2.15,
+          availableHeight * 1.55
+        );
+
       return Math.floor(
         Math.min(
-          1250,
+          2400,
           Math.max(
-            760,
-            Math.min(
-              availableWidth * 2,
-              availableHeight * 1.45
-            )
+            mobile ? 1500 : 1800,
+            visualWidth * pixelRatio
           )
         )
       );
@@ -1448,7 +1440,7 @@
           pageNumber += 1
         ) {
           loading.textContent =
-            "Sayfalar hazırlanıyor… " +
+            "Yüksek kaliteli sayfalar hazırlanıyor… " +
             pageNumber +
             " / " +
             pdfDocument.numPages;
