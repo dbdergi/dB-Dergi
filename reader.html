@@ -6,7 +6,7 @@
 
   <title>dB Dergi</title>
 
-  <link rel="icon" type="image/png" href="assets/favicon.png?v=3">
+  <link rel="icon" type="image/png" href="assets/favicon.png?v=4">
 
   <style>
     * {
@@ -17,8 +17,13 @@
       color-scheme: dark;
     }
 
+    html,
     body {
       margin: 0;
+      min-height: 100%;
+    }
+
+    body {
       min-height: 100vh;
       overflow-x: hidden;
       background:
@@ -61,8 +66,8 @@
 
     main {
       width: 100%;
-      min-height: calc(100vh - 124px);
-      padding: 22px 20px 14px;
+      min-height: calc(100vh - 116px);
+      padding: 18px 16px 12px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -70,407 +75,39 @@
     }
 
     .loading {
-      min-height: 32px;
-      margin-bottom: 10px;
-      color: #a9a9a9;
+      min-height: 34px;
+      margin-bottom: 8px;
+      color: #aaaaaa;
+      text-align: center;
       font-size: 12px;
-      letter-spacing: 1px;
+      letter-spacing: 0.8px;
     }
 
-    .book-area {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      perspective: 2200px;
-    }
-
-    .book {
+    .book-stage {
       position: relative;
+      width: min(1240px, calc(100vw - 28px));
+      height: calc(100vh - 192px);
+      min-height: 390px;
       display: flex;
       align-items: center;
       justify-content: center;
-      filter: drop-shadow(0 26px 38px rgba(0, 0, 0, 0.58));
-      transform-style: preserve-3d;
-      isolation: isolate;
+      perspective: 2600px;
     }
 
-    .book::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 50%;
-      z-index: 8;
-      width: 1px;
-      pointer-events: none;
-      background: linear-gradient(
-        to bottom,
-        transparent,
-        rgba(0, 0, 0, 0.34) 12%,
-        rgba(0, 0, 0, 0.34) 88%,
-        transparent
-      );
-      box-shadow:
-        -5px 0 15px rgba(0, 0, 0, 0.15),
-        5px 0 15px rgba(255, 255, 255, 0.04);
+    #book {
+      margin: auto;
+      filter: drop-shadow(0 27px 38px rgba(0, 0, 0, 0.58));
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
-    .page {
-      position: relative;
-      overflow: hidden;
-      background: #ffffff;
-      backface-visibility: hidden;
-      transform-style: preserve-3d;
-    }
-
-    .page-left {
-      border-radius: 5px 0 0 5px;
-      box-shadow:
-        inset -18px 0 25px rgba(0, 0, 0, 0.13),
-        -1px 0 0 rgba(255, 255, 255, 0.65);
-    }
-
-    .page-right {
-      border-radius: 0 5px 5px 0;
-      box-shadow:
-        inset 18px 0 25px rgba(0, 0, 0, 0.11),
-        1px 0 0 rgba(255, 255, 255, 0.65);
-    }
-
-    canvas {
+    #book canvas {
       display: block;
-      max-width: 100%;
-      height: auto;
-    }
-
-    .page-number {
-      position: absolute;
-      right: 10px;
-      bottom: 8px;
-      z-index: 2;
-      min-width: 25px;
-      padding: 4px 7px;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.58);
-      color: #ffffff;
-      text-align: center;
-      font-size: 10px;
-      line-height: 1;
-    }
-
-    .page-left .page-number {
-      right: auto;
-      left: 10px;
-    }
-
-    .flip-sheet {
-      position: absolute;
-      z-index: 30;
-      pointer-events: none;
-      transform-style: preserve-3d;
-      backface-visibility: hidden;
-      will-change: transform, filter, border-radius;
-    }
-
-    .flip-face {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      background: #ffffff;
-      backface-visibility: hidden;
-      transform-style: preserve-3d;
-    }
-
-    .flip-face.front {
-      transform: rotateY(0deg);
-    }
-
-    .flip-face.back {
-      transform: rotateY(180deg);
-    }
-
-    .flip-sheet.next .flip-face {
-      border-radius: 0 5px 5px 0;
-    }
-
-    .flip-sheet.previous .flip-face {
-      border-radius: 5px 0 0 5px;
-    }
-
-    .flip-sheet canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-
-    .flip-page-number {
-      position: absolute;
-      right: 10px;
-      bottom: 8px;
-      min-width: 25px;
-      padding: 4px 7px;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.58);
-      color: #ffffff;
-      text-align: center;
-      font-size: 10px;
-      line-height: 1;
-    }
-
-    .flip-face.side-left .flip-page-number {
-      right: auto;
-      left: 10px;
-    }
-
-    .flip-sheet::before,
-    .flip-sheet::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      z-index: 4;
-      width: 42%;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .flip-sheet.next::before {
-      left: 0;
-      background: linear-gradient(
-        90deg,
-        rgba(0, 0, 0, 0.34),
-        rgba(0, 0, 0, 0.08) 38%,
-        transparent
-      );
-    }
-
-    .flip-sheet.next::after {
-      right: 0;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.34) 48%,
-        rgba(0, 0, 0, 0.24)
-      );
-    }
-
-    .flip-sheet.previous::before {
-      right: 0;
-      background: linear-gradient(
-        270deg,
-        rgba(0, 0, 0, 0.34),
-        rgba(0, 0, 0, 0.08) 38%,
-        transparent
-      );
-    }
-
-    .flip-sheet.previous::after {
-      left: 0;
-      background: linear-gradient(
-        270deg,
-        transparent,
-        rgba(255, 255, 255, 0.34) 48%,
-        rgba(0, 0, 0, 0.24)
-      );
-    }
-
-    .flip-sheet.next {
-      transform-origin: left center;
-    }
-
-    .flip-sheet.previous {
-      transform-origin: right center;
-    }
-
-    .flip-sheet.next.is-turning {
-      animation:
-        curlNext 1.05s cubic-bezier(0.22, 0.61, 0.36, 1)
-        forwards;
-    }
-
-    .flip-sheet.previous.is-turning {
-      animation:
-        curlPrevious 1.05s cubic-bezier(0.22, 0.61, 0.36, 1)
-        forwards;
-    }
-
-    .flip-sheet.is-turning::before {
-      animation:
-        movingCrease 1.05s ease-in-out forwards;
-    }
-
-    .flip-sheet.is-turning::after {
-      animation:
-        movingHighlight 1.05s ease-in-out forwards;
-    }
-
-    @keyframes curlNext {
-      0% {
-        transform:
-          translate3d(0, 0, 2px)
-          rotateY(0deg)
-          scaleX(1)
-          skewY(0deg);
-        border-radius: 0 5px 5px 0;
-        filter:
-          brightness(1)
-          drop-shadow(0 2px 2px rgba(0, 0, 0, 0.08));
-      }
-
-      18% {
-        transform:
-          translate3d(-1%, 0, 10px)
-          rotateY(-22deg)
-          scaleX(0.985)
-          skewY(-0.45deg);
-        border-radius: 0 12px 12px 0;
-        filter:
-          brightness(0.97)
-          drop-shadow(7px 8px 10px rgba(0, 0, 0, 0.20));
-      }
-
-      48% {
-        transform:
-          translate3d(-5%, 0, 38px)
-          rotateY(-92deg)
-          scaleX(0.89)
-          skewY(-2deg);
-        border-radius: 0 32px 32px 0;
-        filter:
-          brightness(0.82)
-          drop-shadow(18px 12px 22px rgba(0, 0, 0, 0.36));
-      }
-
-      76% {
-        transform:
-          translate3d(-2.4%, 0, 18px)
-          rotateY(-151deg)
-          scaleX(0.965)
-          skewY(-0.7deg);
-        border-radius: 14px 7px 7px 14px;
-        filter:
-          brightness(0.91)
-          drop-shadow(8px 7px 12px rgba(0, 0, 0, 0.23));
-      }
-
-      100% {
-        transform:
-          translate3d(0, 0, 2px)
-          rotateY(-180deg)
-          scaleX(1)
-          skewY(0deg);
-        border-radius: 5px 0 0 5px;
-        filter:
-          brightness(1)
-          drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06));
-      }
-    }
-
-    @keyframes curlPrevious {
-      0% {
-        transform:
-          translate3d(0, 0, 2px)
-          rotateY(0deg)
-          scaleX(1)
-          skewY(0deg);
-        border-radius: 5px 0 0 5px;
-        filter:
-          brightness(1)
-          drop-shadow(0 2px 2px rgba(0, 0, 0, 0.08));
-      }
-
-      18% {
-        transform:
-          translate3d(1%, 0, 10px)
-          rotateY(22deg)
-          scaleX(0.985)
-          skewY(0.45deg);
-        border-radius: 12px 0 0 12px;
-        filter:
-          brightness(0.97)
-          drop-shadow(-7px 8px 10px rgba(0, 0, 0, 0.20));
-      }
-
-      48% {
-        transform:
-          translate3d(5%, 0, 38px)
-          rotateY(92deg)
-          scaleX(0.89)
-          skewY(2deg);
-        border-radius: 32px 0 0 32px;
-        filter:
-          brightness(0.82)
-          drop-shadow(-18px 12px 22px rgba(0, 0, 0, 0.36));
-      }
-
-      76% {
-        transform:
-          translate3d(2.4%, 0, 18px)
-          rotateY(151deg)
-          scaleX(0.965)
-          skewY(0.7deg);
-        border-radius: 7px 14px 14px 7px;
-        filter:
-          brightness(0.91)
-          drop-shadow(-8px 7px 12px rgba(0, 0, 0, 0.23));
-      }
-
-      100% {
-        transform:
-          translate3d(0, 0, 2px)
-          rotateY(180deg)
-          scaleX(1)
-          skewY(0deg);
-        border-radius: 0 5px 5px 0;
-        filter:
-          brightness(1)
-          drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06));
-      }
-    }
-
-    @keyframes movingCrease {
-      0% {
-        opacity: 0;
-        transform: translateX(0);
-      }
-
-      24% {
-        opacity: 0.34;
-      }
-
-      52% {
-        opacity: 0.78;
-        transform: translateX(38%);
-      }
-
-      100% {
-        opacity: 0;
-        transform: translateX(72%);
-      }
-    }
-
-    @keyframes movingHighlight {
-      0% {
-        opacity: 0;
-        transform: translateX(-28%);
-      }
-
-      38% {
-        opacity: 0.22;
-      }
-
-      58% {
-        opacity: 0.62;
-      }
-
-      100% {
-        opacity: 0;
-        transform: translateX(26%);
-      }
     }
 
     .controls {
-      margin-top: 20px;
+      margin-top: 14px;
       padding: 7px;
       display: flex;
       align-items: center;
@@ -566,24 +203,17 @@
 
       main {
         min-height: calc(100vh - 108px);
-        padding: 14px 9px 12px;
+        padding: 12px 8px 10px;
       }
 
-      .book::before {
-        display: none;
-      }
-
-      .page {
-        border-radius: 4px;
-        box-shadow: none;
-      }
-
-      .page-right {
-        display: none;
+      .book-stage {
+        width: calc(100vw - 14px);
+        height: calc(100vh - 176px);
+        min-height: 360px;
       }
 
       .controls {
-        margin-top: 14px;
+        margin-top: 10px;
         gap: 2px;
       }
 
@@ -604,14 +234,6 @@
         font-size: 10px;
       }
     }
-
-    @media (prefers-reduced-motion: reduce) {
-      .flip-sheet.is-turning,
-      .flip-sheet.is-turning::before,
-      .flip-sheet.is-turning::after {
-        animation-duration: 0.01ms;
-      }
-    }
   </style>
 </head>
 
@@ -627,20 +249,8 @@
       Dergi hazırlanıyor…
     </div>
 
-    <div class="book-area">
-      <div class="book" id="book">
-
-        <div class="page page-left" id="leftPage">
-          <canvas id="leftCanvas"></canvas>
-          <div class="page-number" id="leftNumber"></div>
-        </div>
-
-        <div class="page page-right" id="rightPage">
-          <canvas id="rightCanvas"></canvas>
-          <div class="page-number" id="rightNumber"></div>
-        </div>
-
-      </div>
+    <div class="book-stage">
+      <div id="book" aria-label="dB Dergi okuyucu"></div>
     </div>
 
     <div class="controls" aria-label="Dergi kontrolleri">
@@ -686,8 +296,10 @@
   </main>
 
   <footer>
-    Yön tuşlarını veya sayfaların kenarlarını kullanarak ilerleyebilirsin.
+    Sayfanın köşesini tutup sürükleyerek çevirebilirsin.
   </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
 
   <script type="module">
     import * as pdfjsLib from
@@ -710,6 +322,18 @@
 
     const pdfAddress =
       "/assets/" + safeIssueName;
+
+    const issueBaseName =
+      safeIssueName.replace(/\.pdf$/i, "");
+
+    const generatedPagesBase =
+      "/assets/pages/" +
+      encodeURIComponent(issueBaseName) +
+      "/";
+
+    const generatedManifestAddress =
+      generatedPagesBase +
+      "manifest.json";
 
     const issueMatch =
       safeIssueName.match(
@@ -761,29 +385,11 @@
       .getElementById("issueName")
       .textContent = fullIssueLabel;
 
-    const book =
+    const bookElement =
       document.getElementById("book");
 
     const loading =
       document.getElementById("loading");
-
-    const leftPage =
-      document.getElementById("leftPage");
-
-    const rightPage =
-      document.getElementById("rightPage");
-
-    const leftCanvas =
-      document.getElementById("leftCanvas");
-
-    const rightCanvas =
-      document.getElementById("rightCanvas");
-
-    const leftNumber =
-      document.getElementById("leftNumber");
-
-    const rightNumber =
-      document.getElementById("rightNumber");
 
     const previousButton =
       document.getElementById("previousButton");
@@ -800,340 +406,133 @@
     const pageStatus =
       document.getElementById("pageStatus");
 
+    const createdImageAddresses = [];
+
     let pdfDocument = null;
-    let currentPage = 1;
-    let rendering = false;
-    let transitioning = false;
-    let resizeTimer = null;
+    let pageFlip = null;
 
-    function mobileMode() {
-      return window.innerWidth <= 800;
-    }
-
-    function setPageVisibility(
-      pageContainer,
-      visible
+    function loadImageDimensions(
+      address
     ) {
-      pageContainer.style.display = "block";
-      pageContainer.style.visibility =
-        visible ? "visible" : "hidden";
-    }
+      return new Promise(
+        (resolve, reject) => {
+          const image =
+            new Image();
 
-    function copyPageSize(
-      source,
-      destination
-    ) {
-      destination.style.width =
-        source.style.width;
+          image.onload = () => {
+            resolve({
+              width: image.naturalWidth,
+              height: image.naturalHeight
+            });
+          };
 
-      destination.style.height =
-        source.style.height;
-    }
-
-    async function drawPage(
-      pageNumber,
-      canvas,
-      pageContainer
-    ) {
-      const page =
-        await pdfDocument.getPage(pageNumber);
-
-      const originalViewport =
-        page.getViewport({ scale: 1 });
-
-      const maximumWidth =
-        mobileMode()
-          ? Math.min(window.innerWidth - 28, 700)
-          : Math.min(
-              (window.innerWidth - 84) / 2,
-              570
+          image.onerror = () => {
+            reject(
+              new Error(
+                "İlk sayfa görseli yüklenemedi."
+              )
             );
+          };
 
-      const maximumHeight =
-        Math.max(
-          window.innerHeight - 218,
-          340
-        );
-
-      const displayScale =
-        Math.min(
-          maximumWidth / originalViewport.width,
-          maximumHeight / originalViewport.height
-        );
-
-      const pixelRatio =
-        Math.min(
-          window.devicePixelRatio || 1,
-          2
-        );
-
-      const renderViewport =
-        page.getViewport({
-          scale: displayScale * pixelRatio
-        });
-
-      const displayWidth =
-        renderViewport.width / pixelRatio;
-
-      const displayHeight =
-        renderViewport.height / pixelRatio;
-
-      canvas.width =
-        Math.floor(renderViewport.width);
-
-      canvas.height =
-        Math.floor(renderViewport.height);
-
-      canvas.style.width =
-        displayWidth + "px";
-
-      canvas.style.height =
-        displayHeight + "px";
-
-      pageContainer.style.width =
-        displayWidth + "px";
-
-      pageContainer.style.height =
-        displayHeight + "px";
-
-      const context =
-        canvas.getContext("2d", {
-          alpha: false
-        });
-
-      context.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
+          image.src = address;
+        }
       );
-
-      await page.render({
-        canvasContext: context,
-        viewport: renderViewport
-      }).promise;
     }
 
-    function updateControls() {
-      previousButton.disabled =
-        currentPage <= 1 ||
-        transitioning;
-
-      if (mobileMode()) {
-        nextButton.disabled =
-          currentPage >= pdfDocument.numPages ||
-          transitioning;
-      } else {
-        nextButton.disabled =
-          currentPage >= pdfDocument.numPages ||
-          currentPage + 1 >= pdfDocument.numPages ||
-          transitioning;
-      }
-    }
-
-    async function showPages(
-      announce = true
-    ) {
-      if (!pdfDocument || rendering) {
-        return;
-      }
-
-      rendering = true;
-
-      if (announce) {
-        loading.textContent =
-          "Sayfalar hazırlanıyor…";
-      }
-
-      try {
-        if (mobileMode()) {
-          leftPage.style.display = "block";
-          leftPage.style.visibility = "visible";
-          rightPage.style.display = "none";
-
-          await drawPage(
-            currentPage,
-            leftCanvas,
-            leftPage
-          );
-
-          leftNumber.textContent =
-            currentPage;
-
-          pageStatus.textContent =
-            currentPage +
-            " / " +
-            pdfDocument.numPages;
-        } else if (currentPage === 1) {
-          setPageVisibility(
-            leftPage,
-            false
-          );
-
-          setPageVisibility(
-            rightPage,
-            true
-          );
-
-          await drawPage(
-            1,
-            rightCanvas,
-            rightPage
-          );
-
-          copyPageSize(
-            rightPage,
-            leftPage
-          );
-
-          leftNumber.textContent = "";
-          rightNumber.textContent = "1";
-
-          pageStatus.textContent =
-            "1 / " +
-            pdfDocument.numPages;
-        } else {
-          setPageVisibility(
-            leftPage,
-            true
-          );
-
-          setPageVisibility(
-            rightPage,
-            true
-          );
-
-          await drawPage(
-            currentPage,
-            leftCanvas,
-            leftPage
-          );
-
-          leftNumber.textContent =
-            currentPage;
-
-          if (
-            currentPage + 1 <=
-            pdfDocument.numPages
-          ) {
-            await drawPage(
-              currentPage + 1,
-              rightCanvas,
-              rightPage
-            );
-
-            rightNumber.textContent =
-              currentPage + 1;
-
-            pageStatus.textContent =
-              currentPage +
-              "–" +
-              (currentPage + 1) +
-              " / " +
-              pdfDocument.numPages;
-          } else {
-            setPageVisibility(
-              rightPage,
-              false
-            );
-
-            copyPageSize(
-              leftPage,
-              rightPage
-            );
-
-            rightNumber.textContent = "";
-
-            pageStatus.textContent =
-              currentPage +
-              " / " +
-              pdfDocument.numPages;
+    async function loadGeneratedPages() {
+      const response =
+        await fetch(
+          generatedManifestAddress,
+          {
+            cache: "no-store"
           }
-        }
+        );
 
-        updateControls();
-        loading.textContent = "";
-      } catch (error) {
-        console.error(error);
-
-        loading.textContent =
-          "Sayfa yüklenemedi. Lütfen sayfayı yenile.";
-      }
-
-      rendering = false;
-    }
-
-    function getTargetPage(direction) {
-      if (direction === "next") {
-        if (mobileMode()) {
-          return Math.min(
-            currentPage + 1,
-            pdfDocument.numPages
-          );
-        }
-
-        if (currentPage === 1) {
-          return Math.min(
-            2,
-            pdfDocument.numPages
-          );
-        }
-
-        if (
-          currentPage + 2 <=
-          pdfDocument.numPages
-        ) {
-          return currentPage + 2;
-        }
-
-        return currentPage;
-      }
-
-      if (mobileMode()) {
-        return Math.max(
-          currentPage - 1,
-          1
+      if (!response.ok) {
+        throw new Error(
+          "Hazır sayfa listesi bulunamadı."
         );
       }
 
-      if (currentPage <= 2) {
-        return 1;
+      const manifest =
+        await response.json();
+
+      if (
+        !manifest ||
+        !Array.isArray(manifest.pages) ||
+        manifest.pages.length === 0
+      ) {
+        throw new Error(
+          "Hazır sayfa listesi geçersiz."
+        );
       }
 
-      return Math.max(
-        currentPage - 2,
-        1
-      );
+      const pageAddresses =
+        manifest.pages.map(
+          pageFileName => {
+            return (
+              generatedPagesBase +
+              encodeURIComponent(pageFileName)
+            );
+          }
+        );
+
+      const dimensions =
+        await loadImageDimensions(
+          pageAddresses[0]
+        );
+
+      return {
+        pageAddresses,
+        pageRatio:
+          dimensions.height /
+          dimensions.width
+      };
     }
 
-    async function renderFlipCanvas(
-      pageNumber,
+    function canvasToBlob(
       canvas,
-      cssWidth,
-      cssHeight
+      type,
+      quality
+    ) {
+      return new Promise((resolve, reject) => {
+        canvas.toBlob(
+          blob => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(
+                new Error(
+                  "Sayfa görseli oluşturulamadı."
+                )
+              );
+            }
+          },
+          type,
+          quality
+        );
+      });
+    }
+
+    async function createPageImage(
+      pageNumber,
+      targetWidth
     ) {
       const page =
         await pdfDocument.getPage(pageNumber);
 
       const originalViewport =
         page.getViewport({ scale: 1 });
-
-      const pixelRatio =
-        Math.min(
-          window.devicePixelRatio || 1,
-          2
-        );
 
       const scale =
-        Math.min(
-          (cssWidth * pixelRatio) /
-            originalViewport.width,
-          (cssHeight * pixelRatio) /
-            originalViewport.height
-        );
+        targetWidth /
+        originalViewport.width;
 
       const viewport =
         page.getViewport({ scale });
+
+      const canvas =
+        document.createElement("canvas");
 
       canvas.width =
         Math.floor(viewport.width);
@@ -1141,12 +540,6 @@
       canvas.height =
         Math.floor(viewport.height);
 
-      canvas.style.width =
-        cssWidth + "px";
-
-      canvas.style.height =
-        cssHeight + "px";
-
       const context =
         canvas.getContext("2d", {
           alpha: false
@@ -1154,343 +547,202 @@
 
       await page.render({
         canvasContext: context,
-        viewport
+        viewport: viewport
       }).promise;
-    }
 
-    function addFlipPageNumber(
-      face,
-      pageNumber
-    ) {
-      if (!pageNumber) {
-        return;
-      }
+      let blob;
 
-      const number =
-        document.createElement("div");
-
-      number.className =
-        "flip-page-number";
-
-      number.textContent =
-        pageNumber;
-
-      face.appendChild(number);
-    }
-
-    async function createFlipSheet(
-      direction,
-      targetPage
-    ) {
-      const isMobile =
-        mobileMode();
-
-      const sourcePage =
-        isMobile
-          ? leftPage
-          : direction === "next"
-            ? rightPage
-            : leftPage;
-
-      const sourceCanvas =
-        isMobile
-          ? leftCanvas
-          : direction === "next"
-            ? rightCanvas
-            : leftCanvas;
-
-      const sourceNumber =
-        isMobile
-          ? leftNumber.textContent
-          : direction === "next"
-            ? rightNumber.textContent
-            : leftNumber.textContent;
-
-      if (
-        sourcePage.style.visibility ===
-        "hidden"
-      ) {
-        return null;
-      }
-
-      const sourceRect =
-        sourcePage.getBoundingClientRect();
-
-      const bookRect =
-        book.getBoundingClientRect();
-
-      const sheet =
-        document.createElement("div");
-
-      sheet.className =
-        "flip-sheet " + direction;
-
-      sheet.style.left =
-        sourceRect.left -
-        bookRect.left +
-        "px";
-
-      sheet.style.top =
-        sourceRect.top -
-        bookRect.top +
-        "px";
-
-      sheet.style.width =
-        sourceRect.width + "px";
-
-      sheet.style.height =
-        sourceRect.height + "px";
-
-      const front =
-        document.createElement("div");
-
-      front.className =
-        "flip-face front " +
-        (
-          !isMobile &&
-          direction === "previous"
-            ? "side-left"
-            : "side-right"
-        );
-
-      const frontCanvas =
-        document.createElement("canvas");
-
-      frontCanvas.width =
-        sourceCanvas.width;
-
-      frontCanvas.height =
-        sourceCanvas.height;
-
-      frontCanvas.style.width =
-        sourceRect.width + "px";
-
-      frontCanvas.style.height =
-        sourceRect.height + "px";
-
-      const frontContext =
-        frontCanvas.getContext("2d", {
-          alpha: false
-        });
-
-      frontContext.drawImage(
-        sourceCanvas,
-        0,
-        0
-      );
-
-      front.appendChild(
-        frontCanvas
-      );
-
-      addFlipPageNumber(
-        front,
-        sourceNumber
-      );
-
-      const back =
-        document.createElement("div");
-
-      const backIsLeft =
-        !isMobile &&
-        direction === "next";
-
-      back.className =
-        "flip-face back " +
-        (
-          backIsLeft
-            ? "side-left"
-            : "side-right"
-        );
-
-      const backCanvas =
-        document.createElement("canvas");
-
-      let backPageNumber =
-        targetPage;
-
-      if (
-        !isMobile &&
-        direction === "previous" &&
-        targetPage > 1
-      ) {
-        backPageNumber =
-          targetPage + 1;
-      }
-
-      backPageNumber =
-        Math.min(
-          backPageNumber,
-          pdfDocument.numPages
-        );
-
-      await renderFlipCanvas(
-        backPageNumber,
-        backCanvas,
-        sourceRect.width,
-        sourceRect.height
-      );
-
-      back.appendChild(
-        backCanvas
-      );
-
-      addFlipPageNumber(
-        back,
-        backPageNumber
-      );
-
-      sheet.appendChild(front);
-      sheet.appendChild(back);
-      book.appendChild(sheet);
-
-      return sheet;
-    }
-
-    function waitForAnimation(element) {
-      return new Promise(resolve => {
-        if (!element) {
-          resolve();
-          return;
-        }
-
-        let finished = false;
-
-        const finish = () => {
-          if (finished) {
-            return;
-          }
-
-          finished = true;
-          resolve();
-        };
-
-        const handleAnimationEnd =
-          event => {
-            if (
-              event.animationName ===
-                "curlNext" ||
-              event.animationName ===
-                "curlPrevious"
-            ) {
-              finish();
-            }
-          };
-
-        element.addEventListener(
-          "animationend",
-          handleAnimationEnd,
-          { once: true }
-        );
-
-        window.setTimeout(
-          finish,
-          1350
-        );
-      });
-    }
-
-    function startFlipAnimation(sheet) {
-      if (!sheet) {
-        return;
-      }
-
-      void sheet.offsetWidth;
-
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          sheet.classList.add(
-            "is-turning"
+      try {
+        blob =
+          await canvasToBlob(
+            canvas,
+            "image/webp",
+            0.88
           );
-        });
-      });
+      } catch (webpError) {
+        console.warn(
+          "WebP oluşturulamadı, JPEG kullanılıyor.",
+          webpError
+        );
+
+        blob =
+          await canvasToBlob(
+            canvas,
+            "image/jpeg",
+            0.90
+          );
+      }
+
+      canvas.width = 1;
+      canvas.height = 1;
+
+      const address =
+        URL.createObjectURL(blob);
+
+      createdImageAddresses.push(address);
+
+      return address;
     }
 
-    async function changePage(direction) {
+    function calculatePageWidth() {
+      const mobile =
+        window.innerWidth <= 800;
+
+      const availableHeight =
+        Math.max(
+          window.innerHeight - 205,
+          430
+        );
+
+      const availableWidth =
+        mobile
+          ? window.innerWidth - 24
+          : (window.innerWidth - 70) / 2;
+
+      return Math.floor(
+        Math.min(
+          1250,
+          Math.max(
+            760,
+            Math.min(
+              availableWidth * 2,
+              availableHeight * 1.45
+            )
+          )
+        )
+      );
+    }
+
+    function updatePageStatus(
+      pageIndex = 0
+    ) {
+      if (!pageFlip) {
+        return;
+      }
+
+      const pageCount =
+        pageFlip.getPageCount();
+
+      const displayedPage =
+        Math.min(
+          pageIndex + 1,
+          pageCount
+        );
+
+      pageStatus.textContent =
+        displayedPage +
+        " / " +
+        pageCount;
+
+      previousButton.disabled =
+        pageIndex <= 0;
+
+      nextButton.disabled =
+        pageIndex >=
+        pageCount - 1;
+    }
+
+    function createReader(
+      pageAddresses,
+      pageRatio
+    ) {
       if (
-        !pdfDocument ||
-        rendering ||
-        transitioning
+        !window.St ||
+        !window.St.PageFlip
       ) {
-        return;
+        throw new Error(
+          "Sayfa çevirme sistemi yüklenemedi."
+        );
       }
 
-      const targetPage =
-        getTargetPage(direction);
-
-      if (targetPage === currentPage) {
-        return;
-      }
-
-      transitioning = true;
-      updateControls();
-
-      const flipSheet =
-        await createFlipSheet(
-          direction,
-          targetPage
+      const baseWidth = 560;
+      const baseHeight =
+        Math.round(
+          baseWidth * pageRatio
         );
 
-      currentPage = targetPage;
-
-      await showPages(false);
-
-      const animationFinished =
-        waitForAnimation(
-          flipSheet
+      pageFlip =
+        new window.St.PageFlip(
+          bookElement,
+          {
+            width: baseWidth,
+            height: baseHeight,
+            size: "stretch",
+            minWidth: 260,
+            maxWidth: 620,
+            minHeight:
+              Math.round(260 * pageRatio),
+            maxHeight:
+              Math.round(620 * pageRatio),
+            drawShadow: true,
+            maxShadowOpacity: 0.46,
+            flippingTime: 950,
+            usePortrait: true,
+            startZIndex: 10,
+            autoSize: true,
+            showCover: true,
+            mobileScrollSupport: false,
+            swipeDistance: 18,
+            clickEventForward: true,
+            useMouseEvents: true,
+            disableFlipByClick: false
+          }
         );
 
-      startFlipAnimation(
-        flipSheet
+      pageFlip.on(
+        "init",
+        event => {
+          updatePageStatus(
+            event.data.page
+          );
+        }
       );
 
-      await animationFinished;
+      pageFlip.on(
+        "flip",
+        event => {
+          updatePageStatus(
+            event.data
+          );
+        }
+      );
 
-      if (flipSheet) {
-        flipSheet.remove();
-      }
-
-      transitioning = false;
-      updateControls();
+      pageFlip.loadFromImages(
+        pageAddresses
+      );
     }
 
     previousButton.addEventListener(
       "click",
       () => {
-        changePage("previous");
+        if (pageFlip) {
+          pageFlip.flipPrev("bottom");
+        }
       }
     );
 
     nextButton.addEventListener(
       "click",
       () => {
-        changePage("next");
-      }
-    );
-
-    leftPage.addEventListener(
-      "click",
-      () => {
-        changePage("previous");
-      }
-    );
-
-    rightPage.addEventListener(
-      "click",
-      () => {
-        changePage("next");
+        if (pageFlip) {
+          pageFlip.flipNext("bottom");
+        }
       }
     );
 
     document.addEventListener(
       "keydown",
       event => {
+        if (!pageFlip) {
+          return;
+        }
+
         if (event.key === "ArrowRight") {
-          changePage("next");
+          pageFlip.flipNext("bottom");
         }
 
         if (event.key === "ArrowLeft") {
-          changePage("previous");
+          pageFlip.flipPrev("bottom");
         }
       }
     );
@@ -1522,20 +774,45 @@
           document.fullscreenElement
             ? "Tam ekrandan çık"
             : "Tam ekran";
+
+        window.setTimeout(
+          () => {
+            if (pageFlip) {
+              pageFlip.update();
+            }
+          },
+          120
+        );
       }
     );
 
     window.addEventListener(
       "resize",
       () => {
-        clearTimeout(resizeTimer);
+        window.clearTimeout(
+          window.readerResizeTimer
+        );
 
-        resizeTimer =
-          window.setTimeout(() => {
-            if (!transitioning) {
-              showPages(false);
-            }
-          }, 260);
+        window.readerResizeTimer =
+          window.setTimeout(
+            () => {
+              if (pageFlip) {
+                pageFlip.update();
+              }
+            },
+            180
+          );
+      }
+    );
+
+    window.addEventListener(
+      "beforeunload",
+      () => {
+        createdImageAddresses.forEach(
+          address => {
+            URL.revokeObjectURL(address);
+          }
+        );
       }
     );
 
@@ -1544,6 +821,33 @@
         loading.textContent =
           "Dergi yükleniyor…";
 
+        try {
+          const generated =
+            await loadGeneratedPages();
+
+          createReader(
+            generated.pageAddresses,
+            generated.pageRatio
+          );
+
+          loading.textContent =
+            "Köşeyi tutup sürükleyerek sayfayı çevirebilirsin.";
+
+          window.setTimeout(
+            () => {
+              loading.textContent = "";
+            },
+            2600
+          );
+
+          return;
+        } catch (generatedError) {
+          console.warn(
+            "Hazır sayfalar bulunamadı, PDF hazırlanıyor.",
+            generatedError
+          );
+        }
+
         pdfDocument =
           await pdfjsLib
             .getDocument({
@@ -1551,12 +855,63 @@
             })
             .promise;
 
-        await showPages();
+        const firstPage =
+          await pdfDocument.getPage(1);
+
+        const firstViewport =
+          firstPage.getViewport({
+            scale: 1
+          });
+
+        const pageRatio =
+          firstViewport.height /
+          firstViewport.width;
+
+        const targetWidth =
+          calculatePageWidth();
+
+        const pageAddresses = [];
+
+        for (
+          let pageNumber = 1;
+          pageNumber <=
+          pdfDocument.numPages;
+          pageNumber += 1
+        ) {
+          loading.textContent =
+            "Sayfalar hazırlanıyor… " +
+            pageNumber +
+            " / " +
+            pdfDocument.numPages;
+
+          const address =
+            await createPageImage(
+              pageNumber,
+              targetWidth
+            );
+
+          pageAddresses.push(address);
+        }
+
+        createReader(
+          pageAddresses,
+          pageRatio
+        );
+
+        loading.textContent =
+          "Köşeyi tutup sürükleyerek sayfayı çevirebilirsin.";
+
+        window.setTimeout(
+          () => {
+            loading.textContent = "";
+          },
+          2600
+        );
       } catch (error) {
         console.error(error);
 
         loading.textContent =
-          "Dergi yüklenemedi. PDF dosyasının adını kontrol et.";
+          "Dergi yüklenemedi. Sayfayı yenileyip tekrar dene.";
       }
     }
 
