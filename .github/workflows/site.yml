@@ -80,6 +80,101 @@ jobs:
               -print0
           )
 
+      - name: Dergi sayfalarını hızlı okuyucu için hazırla
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p _site/assets/pages
+          mkdir -p /tmp/dbdergi-pages
+
+          while IFS= read -r -d '' pdf; do
+            filename="$(basename "$pdf")"
+            issue_name="${filename%.*}"
+
+            output_dir="_site/assets/pages/${issue_name}"
+            temporary_dir="/tmp/dbdergi-pages/${issue_name}"
+
+            rm -rf "$output_dir" "$temporary_dir"
+            mkdir -p "$output_dir" "$temporary_dir"
+
+            echo "Sayfalar hazırlanıyor: $filename"
+
+            pdftoppm \
+              -jpeg \
+              -jpegopt quality=92,progressive=y,optimize=y \
+              -r 210 \
+              "$pdf" \
+              "${temporary_dir}/page"
+
+            page_number=0
+            page_files=()
+
+            while IFS= read -r page_image; do
+              page_number=$((page_number + 1))
+
+              output_name="$(
+                printf 'page-%03d.webp' "$page_number"
+              )"
+
+              cwebp \
+                -quiet \
+                -q 90 \
+                -m 6 \
+                -sharp_yuv \
+                -resize 1600 0 \
+                "$page_image" \
+                -o "${output_dir}/${output_name}"
+
+              page_files+=("$output_name")
+            done < <(
+              find "$temporary_dir" \
+                -maxdepth 1 \
+                -type f \
+                -name 'page-*.jpg' \
+                -sort -V
+            )
+
+            if [ "${#page_files[@]}" -eq 0 ]; then
+              echo "HATA: PDF sayfaları üretilemedi: $filename"
+              exit 1
+            fi
+
+            python3 - \
+              "$output_dir/manifest.json" \
+              "${page_files[@]}" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          manifest_path = Path(sys.argv[1])
+          pages = sys.argv[2:]
+
+          manifest_path.write_text(
+              json.dumps(
+                  {
+                      "version": 1,
+                      "format": "webp",
+                      "pages": pages,
+                  },
+                  ensure_ascii=False,
+                  indent=2,
+              )
+              + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+            echo \
+              "${#page_files[@]} sayfa hazırlandı: ${output_dir}"
+          done < <(
+            find _site/assets \
+              -maxdepth 1 \
+              -type f \
+              -iname 'sayi-*.pdf' \
+              -print0
+          )
+
       - name: Paylaşım önizlemesini otomatik hazırla
         shell: bash
         run: |
