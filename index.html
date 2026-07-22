@@ -65,22 +65,32 @@
     }
 
     .visual {
+      position: relative;
       min-height: 560px;
+      overflow: hidden;
       background: #000000;
       color: #ffffff;
-      padding: 55px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
     }
 
     .issue {
+      position: absolute;
+      top: 55px;
+      left: 55px;
+      right: 55px;
+      z-index: 2;
       font-size: 13px;
       letter-spacing: 3px;
       text-transform: uppercase;
     }
 
     .visual h1 {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      padding: 0 30px;
+      transform: translate(-50%, -50%);
+      text-align: center;
       font-size: clamp(60px, 10vw, 120px);
       line-height: 0.85;
       letter-spacing: -8px;
@@ -95,6 +105,10 @@
     }
 
     .visual-bottom {
+      position: absolute;
+      left: 55px;
+      right: 55px;
+      bottom: 55px;
       color: #aaaaaa;
       font-size: 13px;
       line-height: 1.6;
@@ -104,15 +118,14 @@
       min-height: 560px;
       padding: 38px;
       display: grid;
-      grid-template-columns: minmax(190px, 0.85fr) 1fr;
+      grid-template-columns: minmax(240px, 0.95fr) 1fr;
       align-items: center;
       gap: 34px;
     }
 
     .latest-cover-link {
       display: block;
-      width: 100%;
-      max-width: 310px;
+      width: min(100%, 340px);
       margin: auto;
       text-decoration: none;
     }
@@ -304,7 +317,7 @@
       }
 
       .latest-cover-link {
-        max-width: 280px;
+        width: min(100%, 300px);
       }
 
       .latest-info {
@@ -332,11 +345,22 @@
 
       .visual {
         min-height: 420px;
-        padding: 40px 30px;
+      }
+
+      .issue {
+        top: 40px;
+        left: 30px;
+        right: 30px;
       }
 
       .visual h1 {
         letter-spacing: -5px;
+      }
+
+      .visual-bottom {
+        left: 30px;
+        right: 30px;
+        bottom: 40px;
       }
 
       .latest {
@@ -383,7 +407,7 @@
 
       <div class="visual">
         <div class="issue" id="latestIssueLabel">
-          Sayı 01 · Temmuz 2026
+          ISSUE #001 · 22 Temmuz 2026
         </div>
 
         <h1>
@@ -402,7 +426,7 @@
         <a
           class="latest-cover-link"
           id="latestCoverLink"
-          href="reader.html?issue=sayi-1.pdf"
+          href="reader.html?issue=sayi-1-2026-07-22.pdf"
           target="_blank"
         >
           <div class="latest-cover-frame">
@@ -421,7 +445,7 @@
         <div class="latest-info">
           <small>Yeni sayı yayında</small>
 
-          <h2 id="latestTitle">İlk sayıyı keşfet.</h2>
+          <h2 id="latestTitle">ISSUE #001'i keşfet.</h2>
 
           <p>
             Beşiktaş hakkında taraftarların hazırladığı bağımsız,
@@ -431,7 +455,7 @@
           <a
             class="button"
             id="latestReadButton"
-            href="reader.html?issue=sayi-1.pdf"
+            href="reader.html?issue=sayi-1-2026-07-22.pdf"
             target="_blank"
           >
             DERGİYİ OKU →
@@ -474,10 +498,6 @@
     pdfjsLib.GlobalWorkerOptions.workerSrc =
       "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.1.200/build/pdf.worker.mjs";
 
-    /*
-      GitHub bilgileri.
-      Deponun adı değişmediği sürece bunlara dokunma.
-    */
     const repositoryOwner = "dbdergi";
     const repositoryName = "dB-Dergi";
     const repositoryBranch = "main";
@@ -489,14 +509,6 @@
       repositoryName +
       "/contents/assets?ref=" +
       repositoryBranch;
-
-    /*
-      Yalnızca bildiğimiz yayın tarihlerini buraya yazıyoruz.
-      Yeni sayılar, tarih girilmemişse "Dijital sayı" olarak görünür.
-    */
-    const issueDates = {
-      1: "Temmuz 2026"
-    };
 
     const latestIssueLabel =
       document.getElementById("latestIssueLabel");
@@ -525,11 +537,36 @@
     const coverObservers = [];
 
     function paddedIssueNumber(number) {
-      return String(number).padStart(2, "0");
+      return String(number).padStart(3, "0");
     }
 
-    function issueDate(number) {
-      return issueDates[number] || "Dijital sayı";
+    function issueLabel(issue) {
+      return "ISSUE #" + paddedIssueNumber(issue.number);
+    }
+
+    function formatTurkishDate(year, month, day) {
+      const date = new Date(
+        Date.UTC(year, month - 1, day)
+      );
+
+      return new Intl.DateTimeFormat("tr-TR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC"
+      }).format(date);
+    }
+
+    function issueDate(issue) {
+      if (!issue.year || !issue.month || !issue.day) {
+        return "Tarih belirtilmedi";
+      }
+
+      return formatTurkishDate(
+        issue.year,
+        issue.month,
+        issue.day
+      );
     }
 
     function readerAddress(fileName) {
@@ -546,11 +583,32 @@
       );
     }
 
+    function parseIssueFile(fileName) {
+      const match = fileName.match(
+        /^sayi-(\d+)(?:-(\d{4})-(\d{2})-(\d{2}))?\.pdf$/i
+      );
+
+      if (!match) {
+        return null;
+      }
+
+      return {
+        number: Number(match[1]),
+        year: match[2] ? Number(match[2]) : null,
+        month: match[3] ? Number(match[3]) : null,
+        day: match[4] ? Number(match[4]) : null,
+        fileName: fileName
+      };
+    }
+
     function createFallbackIssues() {
       return [
         {
           number: 1,
-          fileName: "sayi-1.pdf"
+          year: 2026,
+          month: 7,
+          day: 22,
+          fileName: "sayi-1-2026-07-22.pdf"
         }
       ];
     }
@@ -569,21 +627,9 @@
       const files = await response.json();
 
       const issues = files
-        .filter(file => {
-          return (
-            file.type === "file" &&
-            /^sayi-(\d+)\.pdf$/i.test(file.name)
-          );
-        })
-        .map(file => {
-          const match =
-            file.name.match(/^sayi-(\d+)\.pdf$/i);
-
-          return {
-            number: Number(match[1]),
-            fileName: file.name
-          };
-        })
+        .filter(file => file.type === "file")
+        .map(file => parseIssueFile(file.name))
+        .filter(Boolean)
         .sort((first, second) => {
           return second.number - first.number;
         });
@@ -679,24 +725,15 @@
     }
 
     function showLatestIssue(issue) {
-      const number =
-        paddedIssueNumber(issue.number);
-
-      const date =
-        issueDate(issue.number);
-
-      const link =
-        readerAddress(issue.fileName);
+      const label = issueLabel(issue);
+      const date = issueDate(issue);
+      const link = readerAddress(issue.fileName);
 
       latestIssueLabel.textContent =
-        date === "Dijital sayı"
-          ? "Sayı " + number
-          : "Sayı " + number + " · " + date;
+        label + " · " + date;
 
       latestTitle.textContent =
-        issue.number === 1
-          ? "İlk sayıyı keşfet."
-          : "Sayı " + number + "'yi keşfet.";
+        label + "'i keşfet.";
 
       latestCoverLink.href = link;
       latestReadButton.href = link;
@@ -713,8 +750,7 @@
         document.createElement("a");
 
       card.className = "archive-card";
-      card.href =
-        readerAddress(issue.fileName);
+      card.href = readerAddress(issue.fileName);
       card.target = "_blank";
 
       const coverFrame =
@@ -731,9 +767,7 @@
 
       canvas.setAttribute(
         "aria-label",
-        "Sayı " +
-          paddedIssueNumber(issue.number) +
-          " kapağı"
+        issueLabel(issue) + " kapağı"
       );
 
       const loading =
@@ -757,15 +791,12 @@
       const date =
         document.createElement("small");
 
-      date.textContent =
-        issueDate(issue.number);
+      date.textContent = issueDate(issue);
 
       const title =
         document.createElement("strong");
 
-      title.textContent =
-        "Sayı " +
-        paddedIssueNumber(issue.number);
+      title.textContent = issueLabel(issue);
 
       const action =
         document.createElement("span");
@@ -780,10 +811,6 @@
       card.appendChild(coverFrame);
       card.appendChild(content);
 
-      /*
-        Kapak, ekrana yaklaşınca yüklenir.
-        Böylece çok fazla sayı olduğunda site ağırlaşmaz.
-      */
       if ("IntersectionObserver" in window) {
         const observer =
           new IntersectionObserver(
@@ -830,10 +857,7 @@
       });
 
       archiveStatus.textContent =
-        issues.length +
-        (issues.length === 1
-          ? " sayı"
-          : " sayı");
+        issues.length + " sayı";
     }
 
     async function startHomepage() {
@@ -843,11 +867,6 @@
         issues = await findIssues();
       } catch (error) {
         console.error(error);
-
-        /*
-          GitHub API geçici olarak çalışmazsa
-          Sayı 1 yine görünmeye devam eder.
-        */
         issues = createFallbackIssues();
 
         archiveStatus.textContent =
