@@ -65,7 +65,7 @@
     }
 
     .visual {
-      min-height: 520px;
+      min-height: 560px;
       background: #000000;
       color: #ffffff;
       padding: 55px;
@@ -88,57 +88,104 @@
 
     .visual h1 span {
       display: block;
-      font-size: 26px;
-      letter-spacing: 6px;
       margin-top: 25px;
+      font-size: 26px;
       font-weight: 400;
+      letter-spacing: 6px;
     }
 
     .visual-bottom {
-      font-size: 13px;
       color: #aaaaaa;
+      font-size: 13px;
       line-height: 1.6;
     }
 
-    .content {
-      padding: 65px 55px;
+    .latest {
+      min-height: 560px;
+      padding: 38px;
+      display: grid;
+      grid-template-columns: minmax(190px, 0.85fr) 1fr;
+      align-items: center;
+      gap: 34px;
+    }
+
+    .latest-cover-link {
+      display: block;
+      width: 100%;
+      max-width: 310px;
+      margin: auto;
+      text-decoration: none;
+    }
+
+    .latest-cover-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 0.707;
+      overflow: hidden;
+      background: #e8e8e8;
+      border: 1px solid #dddddd;
+      box-shadow: 0 18px 35px rgba(0, 0, 0, 0.22);
+    }
+
+    .latest-cover {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #e8e8e8;
+      object-fit: contain;
+    }
+
+    .cover-loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #777777;
+      text-align: center;
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    .latest-info {
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
 
-    .content small {
+    .latest-info small {
+      margin-bottom: 18px;
+      color: #777777;
       font-size: 12px;
       letter-spacing: 3px;
       text-transform: uppercase;
-      color: #777777;
-      margin-bottom: 20px;
     }
 
-    .content h2 {
-      font-size: clamp(38px, 5vw, 68px);
+    .latest-info h2 {
+      margin-bottom: 22px;
+      font-size: clamp(34px, 4.5vw, 60px);
       line-height: 1;
       letter-spacing: -3px;
-      margin-bottom: 25px;
     }
 
-    .content p {
+    .latest-info p {
+      max-width: 420px;
+      margin-bottom: 30px;
       color: #555555;
-      font-size: 17px;
+      font-size: 16px;
       line-height: 1.7;
-      margin-bottom: 35px;
-      max-width: 480px;
     }
 
     .button {
       display: inline-block;
       width: fit-content;
+      padding: 17px 28px;
       background: #000000;
       color: #ffffff;
       text-decoration: none;
-      padding: 17px 28px;
-      font-weight: 700;
       font-size: 14px;
+      font-weight: 700;
       letter-spacing: 1px;
       transition: 0.2s;
     }
@@ -153,21 +200,33 @@
       max-width: 1100px;
     }
 
+    .archive-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
     .archive-title {
-      margin-bottom: 18px;
-      font-size: 24px;
+      font-size: 26px;
       letter-spacing: -1px;
+    }
+
+    .archive-status {
+      color: #777777;
+      font-size: 12px;
     }
 
     .archive-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 20px;
     }
 
     .archive-card {
       display: block;
-      padding: 22px;
+      overflow: hidden;
       background: #ffffff;
       color: #111111;
       text-decoration: none;
@@ -176,24 +235,45 @@
     }
 
     .archive-card:hover {
-      transform: translateY(-3px);
+      transform: translateY(-4px);
       border-color: #111111;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .archive-cover-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 0.707;
+      overflow: hidden;
+      background: #e7e7e7;
+      border-bottom: 1px solid #dddddd;
+    }
+
+    .archive-cover {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #e7e7e7;
+      object-fit: contain;
+    }
+
+    .archive-card-content {
+      padding: 20px;
     }
 
     .archive-card small {
       display: block;
       margin-bottom: 8px;
       color: #777777;
-      font-size: 11px;
+      font-size: 10px;
       letter-spacing: 2px;
       text-transform: uppercase;
     }
 
     .archive-card strong {
       display: block;
-      font-size: 20px;
-      margin-bottom: 6px;
+      margin-bottom: 7px;
+      font-size: 21px;
     }
 
     .archive-card span {
@@ -201,11 +281,36 @@
       font-size: 13px;
     }
 
+    .archive-message {
+      grid-column: 1 / -1;
+      padding: 35px;
+      background: #ffffff;
+      color: #777777;
+      border: 1px solid #dddddd;
+      text-align: center;
+      font-size: 14px;
+    }
+
     footer {
       padding: 25px 7%;
+      color: #777777;
       text-align: center;
       font-size: 12px;
-      color: #777777;
+    }
+
+    @media (max-width: 900px) {
+      .latest {
+        grid-template-columns: 1fr;
+      }
+
+      .latest-cover-link {
+        max-width: 280px;
+      }
+
+      .latest-info {
+        align-items: center;
+        text-align: center;
+      }
     }
 
     @media (max-width: 750px) {
@@ -234,12 +339,32 @@
         letter-spacing: -5px;
       }
 
-      .content {
-        padding: 45px 30px;
+      .latest {
+        min-height: auto;
+        padding: 35px 25px;
       }
 
       .archive-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 14px;
+      }
+
+      .archive-card-content {
+        padding: 16px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .archive-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .archive-card strong {
+        font-size: 17px;
+      }
+
+      .archive-card span {
+        font-size: 11px;
       }
     }
   </style>
@@ -257,7 +382,9 @@
     <section class="magazine">
 
       <div class="visual">
-        <div class="issue">Sayı 01 · Temmuz 2026</div>
+        <div class="issue" id="latestIssueLabel">
+          Sayı 01 · Temmuz 2026
+        </div>
 
         <h1>
           dB
@@ -270,42 +397,469 @@
         </div>
       </div>
 
-      <div class="content">
-        <small>Yeni sayı yayında</small>
+      <div class="latest">
 
-        <h2>İlk sayıyı keşfet.</h2>
+        <a
+          class="latest-cover-link"
+          id="latestCoverLink"
+          href="reader.html?issue=sayi-1.pdf"
+          target="_blank"
+        >
+          <div class="latest-cover-frame">
+            <canvas
+              class="latest-cover"
+              id="latestCover"
+              aria-label="Son sayının kapağı"
+            ></canvas>
 
-        <p>
-          Beşiktaş hakkında taraftarların hazırladığı bağımsız,
-          ücretsiz ve dijital bir dergi deneyimi.
-        </p>
-
-        <a class="button" href="reader.html" target="_blank">
-          DERGİYİ OKU →
+            <div class="cover-loading" id="latestCoverLoading">
+              Kapak hazırlanıyor…
+            </div>
+          </div>
         </a>
+
+        <div class="latest-info">
+          <small>Yeni sayı yayında</small>
+
+          <h2 id="latestTitle">İlk sayıyı keşfet.</h2>
+
+          <p>
+            Beşiktaş hakkında taraftarların hazırladığı bağımsız,
+            ücretsiz ve dijital bir dergi deneyimi.
+          </p>
+
+          <a
+            class="button"
+            id="latestReadButton"
+            href="reader.html?issue=sayi-1.pdf"
+            target="_blank"
+          >
+            DERGİYİ OKU →
+          </a>
+        </div>
+
       </div>
 
     </section>
 
     <section class="archive">
-      <h2 class="archive-title">Arşiv</h2>
 
-      <div class="archive-grid">
+      <div class="archive-heading">
+        <h2 class="archive-title">Arşiv</h2>
 
-        <a class="archive-card" href="reader.html" target="_blank">
-          <small>Temmuz 2026</small>
-          <strong>Sayı 01</strong>
-          <span>Dergiyi oku →</span>
-        </a>
-
+        <div class="archive-status" id="archiveStatus">
+          Sayılar aranıyor…
+        </div>
       </div>
+
+      <div class="archive-grid" id="archiveGrid">
+        <div class="archive-message">
+          Dergi arşivi hazırlanıyor…
+        </div>
+      </div>
+
     </section>
 
   </main>
 
   <footer>
-    dB Dergi, Beşiktaş Jimnastik Kulübü ile resmî bağlantısı bulunmayan bağımsız bir taraftar yayınıdır.
+    dB Dergi, Beşiktaş Jimnastik Kulübü ile resmî bağlantısı
+    bulunmayan bağımsız bir taraftar yayınıdır.
   </footer>
+
+  <script type="module">
+    import * as pdfjsLib from
+      "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.1.200/build/pdf.mjs";
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.1.200/build/pdf.worker.mjs";
+
+    /*
+      GitHub bilgileri.
+      Deponun adı değişmediği sürece bunlara dokunma.
+    */
+    const repositoryOwner = "dbdergi";
+    const repositoryName = "dB-Dergi";
+    const repositoryBranch = "main";
+
+    const apiAddress =
+      "https://api.github.com/repos/" +
+      repositoryOwner +
+      "/" +
+      repositoryName +
+      "/contents/assets?ref=" +
+      repositoryBranch;
+
+    /*
+      Yalnızca bildiğimiz yayın tarihlerini buraya yazıyoruz.
+      Yeni sayılar, tarih girilmemişse "Dijital sayı" olarak görünür.
+    */
+    const issueDates = {
+      1: "Temmuz 2026"
+    };
+
+    const latestIssueLabel =
+      document.getElementById("latestIssueLabel");
+
+    const latestCover =
+      document.getElementById("latestCover");
+
+    const latestCoverLoading =
+      document.getElementById("latestCoverLoading");
+
+    const latestCoverLink =
+      document.getElementById("latestCoverLink");
+
+    const latestReadButton =
+      document.getElementById("latestReadButton");
+
+    const latestTitle =
+      document.getElementById("latestTitle");
+
+    const archiveGrid =
+      document.getElementById("archiveGrid");
+
+    const archiveStatus =
+      document.getElementById("archiveStatus");
+
+    const coverObservers = [];
+
+    function paddedIssueNumber(number) {
+      return String(number).padStart(2, "0");
+    }
+
+    function issueDate(number) {
+      return issueDates[number] || "Dijital sayı";
+    }
+
+    function readerAddress(fileName) {
+      return (
+        "reader.html?issue=" +
+        encodeURIComponent(fileName)
+      );
+    }
+
+    function pdfAddress(fileName) {
+      return (
+        "assets/" +
+        encodeURIComponent(fileName)
+      );
+    }
+
+    function createFallbackIssues() {
+      return [
+        {
+          number: 1,
+          fileName: "sayi-1.pdf"
+        }
+      ];
+    }
+
+    async function findIssues() {
+      const response = await fetch(apiAddress, {
+        cache: "no-store"
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          "GitHub dosya listesi alınamadı."
+        );
+      }
+
+      const files = await response.json();
+
+      const issues = files
+        .filter(file => {
+          return (
+            file.type === "file" &&
+            /^sayi-(\d+)\.pdf$/i.test(file.name)
+          );
+        })
+        .map(file => {
+          const match =
+            file.name.match(/^sayi-(\d+)\.pdf$/i);
+
+          return {
+            number: Number(match[1]),
+            fileName: file.name
+          };
+        })
+        .sort((first, second) => {
+          return second.number - first.number;
+        });
+
+      if (issues.length === 0) {
+        throw new Error(
+          "Assets klasöründe sayı PDF'i bulunamadı."
+        );
+      }
+
+      return issues;
+    }
+
+    async function renderCover(
+      fileName,
+      canvas,
+      loadingElement
+    ) {
+      try {
+        if (loadingElement) {
+          loadingElement.textContent =
+            "Kapak hazırlanıyor…";
+        }
+
+        const loadingTask =
+          pdfjsLib.getDocument({
+            url: pdfAddress(fileName)
+          });
+
+        const pdfDocument =
+          await loadingTask.promise;
+
+        const firstPage =
+          await pdfDocument.getPage(1);
+
+        const originalViewport =
+          firstPage.getViewport({
+            scale: 1
+          });
+
+        const cssWidth =
+          Math.max(
+            canvas.parentElement.clientWidth,
+            180
+          );
+
+        const pixelRatio =
+          Math.min(
+            window.devicePixelRatio || 1,
+            2
+          );
+
+        const scale =
+          (cssWidth / originalViewport.width) *
+          pixelRatio;
+
+        const renderViewport =
+          firstPage.getViewport({
+            scale: scale
+          });
+
+        canvas.width =
+          Math.floor(renderViewport.width);
+
+        canvas.height =
+          Math.floor(renderViewport.height);
+
+        const context =
+          canvas.getContext("2d", {
+            alpha: false
+          });
+
+        await firstPage.render({
+          canvasContext: context,
+          viewport: renderViewport
+        }).promise;
+
+        if (loadingElement) {
+          loadingElement.style.display = "none";
+        }
+
+        if (typeof pdfDocument.destroy === "function") {
+          await pdfDocument.destroy();
+        }
+      } catch (error) {
+        console.error(error);
+
+        if (loadingElement) {
+          loadingElement.textContent =
+            "Kapak yüklenemedi";
+        }
+      }
+    }
+
+    function showLatestIssue(issue) {
+      const number =
+        paddedIssueNumber(issue.number);
+
+      const date =
+        issueDate(issue.number);
+
+      const link =
+        readerAddress(issue.fileName);
+
+      latestIssueLabel.textContent =
+        date === "Dijital sayı"
+          ? "Sayı " + number
+          : "Sayı " + number + " · " + date;
+
+      latestTitle.textContent =
+        issue.number === 1
+          ? "İlk sayıyı keşfet."
+          : "Sayı " + number + "'yi keşfet.";
+
+      latestCoverLink.href = link;
+      latestReadButton.href = link;
+
+      renderCover(
+        issue.fileName,
+        latestCover,
+        latestCoverLoading
+      );
+    }
+
+    function createArchiveCard(issue) {
+      const card =
+        document.createElement("a");
+
+      card.className = "archive-card";
+      card.href =
+        readerAddress(issue.fileName);
+      card.target = "_blank";
+
+      const coverFrame =
+        document.createElement("div");
+
+      coverFrame.className =
+        "archive-cover-frame";
+
+      const canvas =
+        document.createElement("canvas");
+
+      canvas.className =
+        "archive-cover";
+
+      canvas.setAttribute(
+        "aria-label",
+        "Sayı " +
+          paddedIssueNumber(issue.number) +
+          " kapağı"
+      );
+
+      const loading =
+        document.createElement("div");
+
+      loading.className =
+        "cover-loading";
+
+      loading.textContent =
+        "Kapak hazırlanıyor…";
+
+      coverFrame.appendChild(canvas);
+      coverFrame.appendChild(loading);
+
+      const content =
+        document.createElement("div");
+
+      content.className =
+        "archive-card-content";
+
+      const date =
+        document.createElement("small");
+
+      date.textContent =
+        issueDate(issue.number);
+
+      const title =
+        document.createElement("strong");
+
+      title.textContent =
+        "Sayı " +
+        paddedIssueNumber(issue.number);
+
+      const action =
+        document.createElement("span");
+
+      action.textContent =
+        "Dergiyi oku →";
+
+      content.appendChild(date);
+      content.appendChild(title);
+      content.appendChild(action);
+
+      card.appendChild(coverFrame);
+      card.appendChild(content);
+
+      /*
+        Kapak, ekrana yaklaşınca yüklenir.
+        Böylece çok fazla sayı olduğunda site ağırlaşmaz.
+      */
+      if ("IntersectionObserver" in window) {
+        const observer =
+          new IntersectionObserver(
+            entries => {
+              entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                  return;
+                }
+
+                renderCover(
+                  issue.fileName,
+                  canvas,
+                  loading
+                );
+
+                observer.unobserve(card);
+              });
+            },
+            {
+              rootMargin: "250px"
+            }
+          );
+
+        observer.observe(card);
+        coverObservers.push(observer);
+      } else {
+        renderCover(
+          issue.fileName,
+          canvas,
+          loading
+        );
+      }
+
+      return card;
+    }
+
+    function showArchive(issues) {
+      archiveGrid.innerHTML = "";
+
+      issues.forEach(issue => {
+        archiveGrid.appendChild(
+          createArchiveCard(issue)
+        );
+      });
+
+      archiveStatus.textContent =
+        issues.length +
+        (issues.length === 1
+          ? " sayı"
+          : " sayı");
+    }
+
+    async function startHomepage() {
+      let issues;
+
+      try {
+        issues = await findIssues();
+      } catch (error) {
+        console.error(error);
+
+        /*
+          GitHub API geçici olarak çalışmazsa
+          Sayı 1 yine görünmeye devam eder.
+        */
+        issues = createFallbackIssues();
+
+        archiveStatus.textContent =
+          "Arşiv çevrimdışı listeden gösteriliyor";
+      }
+
+      showLatestIssue(issues[0]);
+      showArchive(issues);
+    }
+
+    startHomepage();
+  </script>
 
 </body>
 </html>
