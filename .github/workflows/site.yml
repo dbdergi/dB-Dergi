@@ -110,7 +110,7 @@ jobs:
             page_number=0
             page_files=()
 
-            while IFS= read -r page_image; do
+            while IFS= read -r -d '' page_image; do
               page_number=$((page_number + 1))
 
               output_name="$(
@@ -132,7 +132,8 @@ jobs:
                 -maxdepth 1 \
                 -type f \
                 -name 'page-*.jpg' \
-                -sort -V
+                -print0 |
+              sort -z -V
             )
 
             if [ "${#page_files[@]}" -eq 0 ]; then
