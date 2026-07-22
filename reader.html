@@ -371,12 +371,12 @@
       "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.1.200/build/pdf.worker.mjs";
 
     const parameters = new URLSearchParams(window.location.search);
-    const requestedIssue = parameters.get("issue") || "sayi-1.pdf";
+    const requestedIssue = parameters.get("issue") || "sayi-1-2026-07-22.pdf";
 
     const safeIssueName =
       /^[a-z0-9._-]+\.pdf$/i.test(requestedIssue)
         ? requestedIssue
-        : "sayi-1.pdf";
+        : "sayi-1-2026-07-22.pdf";
 
     const pdfAddress = "/assets/" + safeIssueName;
 
