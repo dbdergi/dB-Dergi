@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<link rel="icon" type="image/png" href="assets/favicon.png?v=2">
+  <link rel="icon" type="image/png" href="assets/favicon.png?v=2">
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -47,8 +48,10 @@
     main {
       min-height: calc(100vh - 150px);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 40px;
       padding: 60px 7%;
     }
 
@@ -145,6 +148,59 @@
       transform: translateY(-2px);
     }
 
+    .archive {
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .archive-title {
+      margin-bottom: 18px;
+      font-size: 24px;
+      letter-spacing: -1px;
+    }
+
+    .archive-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .archive-card {
+      display: block;
+      padding: 22px;
+      background: #ffffff;
+      color: #111111;
+      text-decoration: none;
+      border: 1px solid #dddddd;
+      transition: 0.2s;
+    }
+
+    .archive-card:hover {
+      transform: translateY(-3px);
+      border-color: #111111;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .archive-card small {
+      display: block;
+      margin-bottom: 8px;
+      color: #777777;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .archive-card strong {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .archive-card span {
+      color: #777777;
+      font-size: 13px;
+    }
+
     footer {
       padding: 25px 7%;
       text-align: center;
@@ -181,6 +237,10 @@
       .content {
         padding: 45px 30px;
       }
+
+      .archive-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -193,6 +253,7 @@
   </header>
 
   <main>
+
     <section class="magazine">
 
       <div class="visual">
@@ -225,6 +286,21 @@
       </div>
 
     </section>
+
+    <section class="archive">
+      <h2 class="archive-title">Arşiv</h2>
+
+      <div class="archive-grid">
+
+        <a class="archive-card" href="reader.html" target="_blank">
+          <small>Temmuz 2026</small>
+          <strong>Sayı 01</strong>
+          <span>Dergiyi oku →</span>
+        </a>
+
+      </div>
+    </section>
+
   </main>
 
   <footer>
