@@ -861,7 +861,9 @@
     async function loadGeneratedPages() {
       const response =
         await fetch(
-          generatedManifestAddress,
+          generatedManifestAddress +
+            "?refresh=" +
+            Date.now(),
           {
             cache: "no-store"
           }
@@ -886,12 +888,22 @@
         );
       }
 
+      const pageVersion =
+        encodeURIComponent(
+          String(
+            manifest.version ||
+            "1"
+          )
+        );
+
       const pageAddresses =
         manifest.pages.map(
           pageFileName => {
             return (
               generatedPagesBase +
-              encodeURIComponent(pageFileName)
+              encodeURIComponent(pageFileName) +
+              "?v=" +
+              pageVersion
             );
           }
         );

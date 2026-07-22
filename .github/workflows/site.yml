@@ -146,16 +146,21 @@ jobs:
               "$output_dir/manifest.json" \
               "${page_files[@]}" <<'PY'
           import json
+          import os
           import sys
           from pathlib import Path
 
           manifest_path = Path(sys.argv[1])
           pages = sys.argv[2:]
+          version = os.environ.get(
+              "GITHUB_SHA",
+              "local-build",
+          )[:12]
 
           manifest_path.write_text(
               json.dumps(
                   {
-                      "version": 1,
+                      "version": version,
                       "format": "webp",
                       "pages": pages,
                   },
