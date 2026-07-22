@@ -166,48 +166,44 @@
     .flip-sheet {
       position: absolute;
       z-index: 30;
-      overflow: hidden;
-      background: #ffffff;
       pointer-events: none;
       transform-style: preserve-3d;
       backface-visibility: hidden;
-      will-change: transform, filter;
+      will-change: transform, filter, border-radius;
     }
 
-    .flip-sheet::after {
-      content: "";
+    .flip-face {
       position: absolute;
       inset: 0;
-      pointer-events: none;
-      opacity: 0;
-      background:
-        linear-gradient(
-          90deg,
-          rgba(255, 255, 255, 0.05) 0%,
-          rgba(255, 255, 255, 0.28) 44%,
-          rgba(0, 0, 0, 0.32) 100%
-        );
-      animation: flipLight 0.72s ease-in-out forwards;
+      overflow: hidden;
+      background: #ffffff;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
     }
 
-    .flip-sheet.next {
-      transform-origin: left center;
+    .flip-face.front {
+      transform: rotateY(0deg);
+    }
+
+    .flip-face.back {
+      transform: rotateY(180deg);
+    }
+
+    .flip-sheet.next .flip-face {
       border-radius: 0 5px 5px 0;
-      animation: flipNext 0.72s cubic-bezier(0.23, 0.72, 0.15, 1) forwards;
     }
 
-    .flip-sheet.previous {
-      transform-origin: right center;
+    .flip-sheet.previous .flip-face {
       border-radius: 5px 0 0 5px;
-      animation: flipPrevious 0.72s cubic-bezier(0.23, 0.72, 0.15, 1) forwards;
     }
 
     .flip-sheet canvas {
+      display: block;
       width: 100%;
       height: 100%;
     }
 
-    .flip-sheet .flip-page-number {
+    .flip-page-number {
       position: absolute;
       right: 10px;
       bottom: 8px;
@@ -221,56 +217,255 @@
       line-height: 1;
     }
 
-    .flip-sheet.previous .flip-page-number {
+    .flip-face.side-left .flip-page-number {
       right: auto;
       left: 10px;
     }
 
-    @keyframes flipNext {
+    .flip-sheet::before,
+    .flip-sheet::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      z-index: 4;
+      width: 42%;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .flip-sheet.next::before {
+      left: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.34),
+        rgba(0, 0, 0, 0.08) 38%,
+        transparent
+      );
+    }
+
+    .flip-sheet.next::after {
+      right: 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.34) 48%,
+        rgba(0, 0, 0, 0.24)
+      );
+    }
+
+    .flip-sheet.previous::before {
+      right: 0;
+      background: linear-gradient(
+        270deg,
+        rgba(0, 0, 0, 0.34),
+        rgba(0, 0, 0, 0.08) 38%,
+        transparent
+      );
+    }
+
+    .flip-sheet.previous::after {
+      left: 0;
+      background: linear-gradient(
+        270deg,
+        transparent,
+        rgba(255, 255, 255, 0.34) 48%,
+        rgba(0, 0, 0, 0.24)
+      );
+    }
+
+    .flip-sheet.next {
+      transform-origin: left center;
+    }
+
+    .flip-sheet.previous {
+      transform-origin: right center;
+    }
+
+    .flip-sheet.next.is-turning {
+      animation:
+        curlNext 1.05s cubic-bezier(0.22, 0.61, 0.36, 1)
+        forwards;
+    }
+
+    .flip-sheet.previous.is-turning {
+      animation:
+        curlPrevious 1.05s cubic-bezier(0.22, 0.61, 0.36, 1)
+        forwards;
+    }
+
+    .flip-sheet.is-turning::before {
+      animation:
+        movingCrease 1.05s ease-in-out forwards;
+    }
+
+    .flip-sheet.is-turning::after {
+      animation:
+        movingHighlight 1.05s ease-in-out forwards;
+    }
+
+    @keyframes curlNext {
       0% {
-        transform: rotateY(0deg) translateZ(1px);
-        filter: brightness(1);
+        transform:
+          translate3d(0, 0, 2px)
+          rotateY(0deg)
+          scaleX(1)
+          skewY(0deg);
+        border-radius: 0 5px 5px 0;
+        filter:
+          brightness(1)
+          drop-shadow(0 2px 2px rgba(0, 0, 0, 0.08));
       }
 
-      45% {
-        filter: brightness(0.82);
+      18% {
+        transform:
+          translate3d(-1%, 0, 10px)
+          rotateY(-22deg)
+          scaleX(0.985)
+          skewY(-0.45deg);
+        border-radius: 0 12px 12px 0;
+        filter:
+          brightness(0.97)
+          drop-shadow(7px 8px 10px rgba(0, 0, 0, 0.20));
+      }
+
+      48% {
+        transform:
+          translate3d(-5%, 0, 38px)
+          rotateY(-92deg)
+          scaleX(0.89)
+          skewY(-2deg);
+        border-radius: 0 32px 32px 0;
+        filter:
+          brightness(0.82)
+          drop-shadow(18px 12px 22px rgba(0, 0, 0, 0.36));
+      }
+
+      76% {
+        transform:
+          translate3d(-2.4%, 0, 18px)
+          rotateY(-151deg)
+          scaleX(0.965)
+          skewY(-0.7deg);
+        border-radius: 14px 7px 7px 14px;
+        filter:
+          brightness(0.91)
+          drop-shadow(8px 7px 12px rgba(0, 0, 0, 0.23));
       }
 
       100% {
-        transform: rotateY(-180deg) translateZ(1px);
-        filter: brightness(0.65);
+        transform:
+          translate3d(0, 0, 2px)
+          rotateY(-180deg)
+          scaleX(1)
+          skewY(0deg);
+        border-radius: 5px 0 0 5px;
+        filter:
+          brightness(1)
+          drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06));
       }
     }
 
-    @keyframes flipPrevious {
+    @keyframes curlPrevious {
       0% {
-        transform: rotateY(0deg) translateZ(1px);
-        filter: brightness(1);
+        transform:
+          translate3d(0, 0, 2px)
+          rotateY(0deg)
+          scaleX(1)
+          skewY(0deg);
+        border-radius: 5px 0 0 5px;
+        filter:
+          brightness(1)
+          drop-shadow(0 2px 2px rgba(0, 0, 0, 0.08));
       }
 
-      45% {
-        filter: brightness(0.82);
+      18% {
+        transform:
+          translate3d(1%, 0, 10px)
+          rotateY(22deg)
+          scaleX(0.985)
+          skewY(0.45deg);
+        border-radius: 12px 0 0 12px;
+        filter:
+          brightness(0.97)
+          drop-shadow(-7px 8px 10px rgba(0, 0, 0, 0.20));
+      }
+
+      48% {
+        transform:
+          translate3d(5%, 0, 38px)
+          rotateY(92deg)
+          scaleX(0.89)
+          skewY(2deg);
+        border-radius: 32px 0 0 32px;
+        filter:
+          brightness(0.82)
+          drop-shadow(-18px 12px 22px rgba(0, 0, 0, 0.36));
+      }
+
+      76% {
+        transform:
+          translate3d(2.4%, 0, 18px)
+          rotateY(151deg)
+          scaleX(0.965)
+          skewY(0.7deg);
+        border-radius: 7px 14px 14px 7px;
+        filter:
+          brightness(0.91)
+          drop-shadow(-8px 7px 12px rgba(0, 0, 0, 0.23));
       }
 
       100% {
-        transform: rotateY(180deg) translateZ(1px);
-        filter: brightness(0.65);
+        transform:
+          translate3d(0, 0, 2px)
+          rotateY(180deg)
+          scaleX(1)
+          skewY(0deg);
+        border-radius: 0 5px 5px 0;
+        filter:
+          brightness(1)
+          drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06));
       }
     }
 
-    @keyframes flipLight {
+    @keyframes movingCrease {
       0% {
         opacity: 0;
-        transform: translateX(-22%);
+        transform: translateX(0);
       }
 
-      42% {
-        opacity: 0.72;
+      24% {
+        opacity: 0.34;
+      }
+
+      52% {
+        opacity: 0.78;
+        transform: translateX(38%);
       }
 
       100% {
         opacity: 0;
-        transform: translateX(28%);
+        transform: translateX(72%);
+      }
+    }
+
+    @keyframes movingHighlight {
+      0% {
+        opacity: 0;
+        transform: translateX(-28%);
+      }
+
+      38% {
+        opacity: 0.22;
+      }
+
+      58% {
+        opacity: 0.62;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateX(26%);
       }
     }
 
@@ -411,9 +606,9 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .flip-sheet.next,
-      .flip-sheet.previous,
-      .flip-sheet::after {
+      .flip-sheet.is-turning,
+      .flip-sheet.is-turning::before,
+      .flip-sheet.is-turning::after {
         animation-duration: 0.01ms;
       }
     }
@@ -911,27 +1106,105 @@
       );
     }
 
-    function createFlipSheet(direction) {
+    async function renderFlipCanvas(
+      pageNumber,
+      canvas,
+      cssWidth,
+      cssHeight
+    ) {
+      const page =
+        await pdfDocument.getPage(pageNumber);
+
+      const originalViewport =
+        page.getViewport({ scale: 1 });
+
+      const pixelRatio =
+        Math.min(
+          window.devicePixelRatio || 1,
+          2
+        );
+
+      const scale =
+        Math.min(
+          (cssWidth * pixelRatio) /
+            originalViewport.width,
+          (cssHeight * pixelRatio) /
+            originalViewport.height
+        );
+
+      const viewport =
+        page.getViewport({ scale });
+
+      canvas.width =
+        Math.floor(viewport.width);
+
+      canvas.height =
+        Math.floor(viewport.height);
+
+      canvas.style.width =
+        cssWidth + "px";
+
+      canvas.style.height =
+        cssHeight + "px";
+
+      const context =
+        canvas.getContext("2d", {
+          alpha: false
+        });
+
+      await page.render({
+        canvasContext: context,
+        viewport
+      }).promise;
+    }
+
+    function addFlipPageNumber(
+      face,
+      pageNumber
+    ) {
+      if (!pageNumber) {
+        return;
+      }
+
+      const number =
+        document.createElement("div");
+
+      number.className =
+        "flip-page-number";
+
+      number.textContent =
+        pageNumber;
+
+      face.appendChild(number);
+    }
+
+    async function createFlipSheet(
+      direction,
+      targetPage
+    ) {
+      const isMobile =
+        mobileMode();
+
       const sourcePage =
-        mobileMode()
+        isMobile
           ? leftPage
           : direction === "next"
             ? rightPage
             : leftPage;
 
       const sourceCanvas =
-        mobileMode()
+        isMobile
           ? leftCanvas
           : direction === "next"
             ? rightCanvas
             : leftCanvas;
 
       const sourceNumber =
-        mobileMode()
-          ? leftNumber
+        isMobile
+          ? leftNumber.textContent
           : direction === "next"
-            ? rightNumber
-            : leftNumber;
+            ? rightNumber.textContent
+            : leftNumber.textContent;
 
       if (
         sourcePage.style.visibility ===
@@ -968,47 +1241,107 @@
       sheet.style.height =
         sourceRect.height + "px";
 
-      const copiedCanvas =
+      const front =
+        document.createElement("div");
+
+      front.className =
+        "flip-face front " +
+        (
+          !isMobile &&
+          direction === "previous"
+            ? "side-left"
+            : "side-right"
+        );
+
+      const frontCanvas =
         document.createElement("canvas");
 
-      copiedCanvas.width =
+      frontCanvas.width =
         sourceCanvas.width;
 
-      copiedCanvas.height =
+      frontCanvas.height =
         sourceCanvas.height;
 
-      copiedCanvas.style.width =
+      frontCanvas.style.width =
         sourceRect.width + "px";
 
-      copiedCanvas.style.height =
+      frontCanvas.style.height =
         sourceRect.height + "px";
 
-      const copiedContext =
-        copiedCanvas.getContext("2d");
+      const frontContext =
+        frontCanvas.getContext("2d", {
+          alpha: false
+        });
 
-      copiedContext.drawImage(
+      frontContext.drawImage(
         sourceCanvas,
         0,
         0
       );
 
-      sheet.appendChild(
-        copiedCanvas
+      front.appendChild(
+        frontCanvas
       );
 
-      if (sourceNumber.textContent) {
-        const number =
-          document.createElement("div");
+      addFlipPageNumber(
+        front,
+        sourceNumber
+      );
 
-        number.className =
-          "flip-page-number";
+      const back =
+        document.createElement("div");
 
-        number.textContent =
-          sourceNumber.textContent;
+      const backIsLeft =
+        !isMobile &&
+        direction === "next";
 
-        sheet.appendChild(number);
+      back.className =
+        "flip-face back " +
+        (
+          backIsLeft
+            ? "side-left"
+            : "side-right"
+        );
+
+      const backCanvas =
+        document.createElement("canvas");
+
+      let backPageNumber =
+        targetPage;
+
+      if (
+        !isMobile &&
+        direction === "previous" &&
+        targetPage > 1
+      ) {
+        backPageNumber =
+          targetPage + 1;
       }
 
+      backPageNumber =
+        Math.min(
+          backPageNumber,
+          pdfDocument.numPages
+        );
+
+      await renderFlipCanvas(
+        backPageNumber,
+        backCanvas,
+        sourceRect.width,
+        sourceRect.height
+      );
+
+      back.appendChild(
+        backCanvas
+      );
+
+      addFlipPageNumber(
+        back,
+        backPageNumber
+      );
+
+      sheet.appendChild(front);
+      sheet.appendChild(back);
       book.appendChild(sheet);
 
       return sheet;
@@ -1032,16 +1365,44 @@
           resolve();
         };
 
+        const handleAnimationEnd =
+          event => {
+            if (
+              event.animationName ===
+                "curlNext" ||
+              event.animationName ===
+                "curlPrevious"
+            ) {
+              finish();
+            }
+          };
+
         element.addEventListener(
           "animationend",
-          finish,
+          handleAnimationEnd,
           { once: true }
         );
 
         window.setTimeout(
           finish,
-          900
+          1350
         );
+      });
+    }
+
+    function startFlipAnimation(sheet) {
+      if (!sheet) {
+        return;
+      }
+
+      void sheet.offsetWidth;
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          sheet.classList.add(
+            "is-turning"
+          );
+        });
       });
     }
 
@@ -1065,15 +1426,25 @@
       updateControls();
 
       const flipSheet =
-        createFlipSheet(direction);
+        await createFlipSheet(
+          direction,
+          targetPage
+        );
 
       currentPage = targetPage;
 
       await showPages(false);
 
-      await waitForAnimation(
+      const animationFinished =
+        waitForAnimation(
+          flipSheet
+        );
+
+      startFlipAnimation(
         flipSheet
       );
+
+      await animationFinished;
 
       if (flipSheet) {
         flipSheet.remove();
