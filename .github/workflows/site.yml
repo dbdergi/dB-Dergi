@@ -41,6 +41,75 @@ jobs:
             ./ _site/
           touch _site/.nojekyll
 
+      - name: Yüklenen PNG sayfalarının listesini hazırla
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          while IFS= read -r -d '' pages_dir; do
+            page_files=()
+
+            while IFS= read -r -d '' page_file; do
+              page_files+=("$(basename "$page_file")")
+            done < <(
+              find "$pages_dir" \
+                -maxdepth 1 \
+                -type f \
+                \( \
+                  -iname '*.png' \
+                  -o -iname '*.jpg' \
+                  -o -iname '*.jpeg' \
+                  -o -iname '*.webp' \
+                \) \
+                -print0 |
+              sort -z -V
+            )
+
+            if [ "${#page_files[@]}" -eq 0 ]; then
+              continue
+            fi
+
+            python3 - \
+              "$pages_dir/manifest.json" \
+              "${page_files[@]}" <<'PY'
+          import json
+          import os
+          import sys
+          from pathlib import Path
+
+          manifest_path = Path(sys.argv[1])
+          pages = sys.argv[2:]
+          version = os.environ.get(
+              "GITHUB_SHA",
+              "local-build",
+          )[:12]
+
+          manifest_path.write_text(
+              json.dumps(
+                  {
+                      "version": version,
+                      "source": "uploaded-images",
+                      "pages": pages,
+                  },
+                  ensure_ascii=False,
+                  indent=2,
+              )
+              + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+            echo \
+              "${#page_files[@]} yüklenen sayfa listelendi: $pages_dir"
+          done < <(
+            find _site/assets/issues \
+              -mindepth 3 \
+              -maxdepth 3 \
+              -type d \
+              -name pages \
+              -print0 2>/dev/null || true
+          )
+
       - name: PDF kapaklarını otomatik üret
         shell: bash
         run: |
@@ -91,6 +160,22 @@ jobs:
           while IFS= read -r -d '' pdf; do
             filename="$(basename "$pdf")"
             issue_name="${filename%.*}"
+
+            issue_number="$(
+              printf '%s' "$filename" |
+              sed -E 's/^sayi-([0-9]+).*/\1/I'
+            )"
+
+            uploaded_pages_dir="_site/assets/issues/sayi-${issue_number}/pages"
+
+            if (
+              [ -d "$uploaded_pages_dir" ] &&
+              find "$uploaded_pages_dir"                 -maxdepth 1                 -type f                 \(                   -iname '*.png'                   -o -iname '*.jpg'                   -o -iname '*.jpeg'                   -o -iname '*.webp'                 \)                 -print                 -quit |
+              grep -q .
+            ); then
+              echo                 "Yüklenen görseller kullanılıyor, PDF dönüşümü atlandı: $filename"
+              continue
+            fi
 
             output_dir="_site/assets/pages/${issue_name}"
             temporary_dir="/tmp/dbdergi-pages/${issue_name}"
