@@ -112,6 +112,44 @@
       pointer-events: none;
     }
 
+    .mobile-reader[hidden] {
+      display: none;
+    }
+
+    .mobile-reader {
+      width: 100%;
+    }
+
+    .mobile-page-scroll {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: visible;
+      padding-bottom: 12px;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+
+    .mobile-page-image {
+      display: block;
+      width: min(190vw, 1000px);
+      max-width: none;
+      height: auto;
+      margin: 0;
+      background: #ffffff;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5);
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .mobile-reader-hint {
+      padding: 9px 4px 0;
+      color: #aaaaaa;
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.4px;
+    }
+
     .closed-book {
       position: absolute;
       inset: 0;
@@ -591,9 +629,21 @@
       }
 
       .book-stage {
-        width: calc(100vw - 14px);
+        width: 100%;
         height: auto;
-        min-height: 300px;
+        min-height: 0;
+        display: block;
+        overflow: visible;
+        perspective: none;
+      }
+
+      #book,
+      .closed-book {
+        display: none !important;
+      }
+
+      .mobile-page-scroll {
+        width: calc(100vw - 16px);
       }
 
       .page-zoom-toolbar {
@@ -654,6 +704,29 @@
     </div>
 
     <div class="book-stage">
+      <div
+        class="mobile-reader"
+        id="mobileReader"
+        aria-label="Mobil dergi okuyucu"
+        hidden
+      >
+        <div
+          class="mobile-page-scroll"
+          id="mobilePageScroll"
+        >
+          <img
+            class="mobile-page-image"
+            id="mobilePageImage"
+            alt="Dergi sayfası"
+            draggable="false"
+          >
+        </div>
+
+        <div class="mobile-reader-hint">
+          Metni okumak için sayfayı sağa ve sola kaydır.
+        </div>
+      </div>
+
       <div
         class="closed-book"
         id="closedBook"
@@ -974,6 +1047,15 @@
     const bookStage =
       document.querySelector(".book-stage");
 
+    const mobileReader =
+      document.getElementById("mobileReader");
+
+    const mobilePageScroll =
+      document.getElementById("mobilePageScroll");
+
+    const mobilePageImage =
+      document.getElementById("mobilePageImage");
+
     const closedBook =
       document.getElementById("closedBook");
 
@@ -1051,6 +1133,8 @@
     let coverPageRatio = 1.414;
     let readerPageAddresses = [];
     let pageZoomScale = 1;
+    let mobileReaderActive = false;
+    let mobilePageIndex = 0;
 
     function loadImageDimensions(
       address
@@ -1593,6 +1677,25 @@
     function updatePageStatus(
       pageIndex = 0
     ) {
+      if (mobileReaderActive) {
+        const pageCount =
+          readerPageAddresses.length;
+
+        pageStatus.textContent =
+          mobilePageIndex + 1 +
+          " / " +
+          pageCount;
+
+        previousButton.disabled =
+          mobilePageIndex <= 0;
+
+        nextButton.disabled =
+          mobilePageIndex >=
+          pageCount - 1;
+
+        return;
+      }
+
       if (!pageFlip) {
         return;
       }
@@ -1624,12 +1727,74 @@
         pageCount - 1;
     }
 
+    function showMobilePage() {
+      if (
+        !mobileReaderActive ||
+        readerPageAddresses.length === 0
+      ) {
+        return;
+      }
+
+      mobilePageImage.src =
+        readerPageAddresses[
+          mobilePageIndex
+        ];
+
+      mobilePageImage.alt =
+        issueLabel +
+        " sayfa " +
+        (mobilePageIndex + 1);
+
+      mobilePageScroll.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "auto"
+      });
+
+      window.scrollTo({
+        top: 0,
+        behavior: "auto"
+      });
+
+      updatePageStatus();
+    }
+
+    function createMobileReader(
+      pageAddresses
+    ) {
+      readerPageAddresses =
+        pageAddresses.slice();
+
+      mobileReaderActive = true;
+      mobilePageIndex = 0;
+      closedState = false;
+
+      mobileReader.hidden = false;
+      closedBook.hidden = true;
+      bookElement.classList.add(
+        "is-hidden"
+      );
+
+      bookStage.style.width = "100%";
+      bookStage.style.height = "auto";
+
+      showMobilePage();
+    }
+
     function createReader(
       pageAddresses,
       pageRatio
     ) {
       readerPageAddresses =
         pageAddresses.slice();
+
+      if (window.innerWidth <= 800) {
+        createMobileReader(
+          pageAddresses
+        );
+
+        return;
+      }
 
       if (
         !window.St ||
@@ -1754,6 +1919,15 @@
     previousButton.addEventListener(
       "click",
       () => {
+        if (mobileReaderActive) {
+          if (mobilePageIndex > 0) {
+            mobilePageIndex -= 1;
+            showMobilePage();
+          }
+
+          return;
+        }
+
         if (
           pageFlip &&
           !closedState
@@ -1766,6 +1940,18 @@
     nextButton.addEventListener(
       "click",
       () => {
+        if (mobileReaderActive) {
+          if (
+            mobilePageIndex <
+            readerPageAddresses.length - 1
+          ) {
+            mobilePageIndex += 1;
+            showMobilePage();
+          }
+
+          return;
+        }
+
         if (!pageFlip) {
           return;
         }
@@ -1782,6 +1968,27 @@
     document.addEventListener(
       "keydown",
       event => {
+        if (mobileReaderActive) {
+          if (
+            event.key === "ArrowRight" &&
+            mobilePageIndex <
+              readerPageAddresses.length - 1
+          ) {
+            mobilePageIndex += 1;
+            showMobilePage();
+          }
+
+          if (
+            event.key === "ArrowLeft" &&
+            mobilePageIndex > 0
+          ) {
+            mobilePageIndex -= 1;
+            showMobilePage();
+          }
+
+          return;
+        }
+
         if (!pageFlip) {
           return;
         }
@@ -1840,6 +2047,10 @@
     }
 
     function zoomPageIndexes() {
+      if (mobileReaderActive) {
+        return [mobilePageIndex];
+      }
+
       if (
         closedState ||
         !pageFlip
@@ -2218,7 +2429,9 @@
           );
 
           loading.textContent =
-            "Köşeyi tutup sürükleyerek sayfayı çevirebilirsin.";
+            window.innerWidth <= 800
+              ? "Sayfa okunabilir büyüklükte açıldı; sağa ve sola kaydırabilirsin."
+              : "Köşeyi tutup sürükleyerek sayfayı çevirebilirsin.";
 
           window.setTimeout(
             () => {
