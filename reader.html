@@ -85,8 +85,8 @@
 
     .book-stage {
       position: relative;
-      width: min(1320px, calc(100vw - 32px));
-      height: clamp(340px, calc(100dvh - 220px), 860px);
+      width: min(1440px, calc(100vw - 20px));
+      height: clamp(360px, calc(100dvh - 178px), 920px);
       min-height: 0;
       display: flex;
       align-items: center;
@@ -2009,8 +2009,8 @@
       const stageBounds =
         bookStage.getBoundingClientRect();
 
-      const horizontalSafetySpace = 28;
-      const verticalSafetySpace = 12;
+      const horizontalSafetySpace = 14;
+      const verticalSafetySpace = 4;
 
       const widthLimit =
         (
@@ -2029,7 +2029,7 @@
           Math.max(
             230,
             Math.min(
-              620,
+              690,
               widthLimit,
               heightLimit
             )
