@@ -303,9 +303,9 @@ jobs:
                       )
                   )
 
-          if not issues:
-    index_html = index_path.read_text(
-        encoding="utf-8"
+if not issues:
+ index_html = index_path.read_text(
+ encoding="utf-8"
     )
 
     index_html = re.sub(
