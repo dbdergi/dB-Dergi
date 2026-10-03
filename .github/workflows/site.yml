@@ -304,9 +304,29 @@ jobs:
                   )
 
           if not issues:
-              raise SystemExit(
-                  "Paylaşım önizlemesi için sayı PDF'i bulunamadı."
-              )
+    index_html = index_path.read_text(
+        encoding="utf-8"
+    )
+
+    index_html = re.sub(
+        r"\s*<!-- SOCIAL PREVIEW START -->.*?<!-- SOCIAL PREVIEW END -->\s*",
+        "\n",
+        index_html,
+        flags=re.DOTALL,
+    )
+
+    index_path.write_text(
+        index_html,
+        encoding="utf-8",
+    )
+
+    stale_social_image = assets / "social-preview.jpg"
+
+    if stale_social_image.exists():
+        stale_social_image.unlink()
+
+    print("Yayınlanmış sayı yok; paylaşım önizlemesi atlandı.")
+    raise SystemExit(0)
 
           issues.sort(
               key=lambda item: item[0],
